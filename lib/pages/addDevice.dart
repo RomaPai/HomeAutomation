@@ -4,19 +4,16 @@ import 'package:teco1/Functions/userData_fun.dart';
 
 import '../Data.dart';
 
-class AddDevice extends StatefulWidget{
+class AddDevice extends StatelessWidget{
   final Data user;
 
   AddDevice({this.user});
 
-  @override
-  _AddDeviceState createState() =>   _AddDeviceState();
 
 
-}
- class  _AddDeviceState extends State<AddDevice>{
-  String deviceId;
-  String bedroom;
+
+  String deviceId ="";
+  String bedroom ="";
   @override
   Widget build(BuildContext context) {
 return Scaffold(
@@ -40,7 +37,7 @@ return Scaffold(
               return null;
             },
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText:  "DEVICE ID",
                 // hintText: label,
                 contentPadding: EdgeInsets.only(left: 20),
                 fillColor: Colors.blue[300],
@@ -66,7 +63,7 @@ return Scaffold(
               return null;
             },
             decoration: InputDecoration(
-              labelText: 'Name',
+              labelText: 'BEDROOM',
               // hintText: label,
               contentPadding: EdgeInsets.only(left: 20),
               fillColor: Colors.blue[300],
@@ -84,11 +81,18 @@ return Scaffold(
           child: Center(
             child: Container(
               child: RaisedButton(
-                child: Text("Save Devide",style: TextStyle(fontSize: 20)),
+                child: Text("Save Device",style: TextStyle(fontSize: 20)),
                 color: Color(0XFF54B0F3),
                 textColor: Colors.white,
                 onPressed: (){
-                  uploadData(user, context); //1
+                  List<String> appl =[];
+                  appl.add(deviceId);
+                  appl.add(bedroom);
+                  print(user.name + " " + "huiefhid");
+
+                  user.deviceList.add(appl);
+                  print(user.deviceList);
+                  uploadData(user, context);//1
                 },
               ),
             ),

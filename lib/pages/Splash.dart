@@ -6,7 +6,7 @@ class Splash extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Image(
-          image: AssetImage('assets/tec_log.jpeg'),
+          image: AssetImage('assets/teco_log.jpeg'),
           width: MediaQuery.of(context).size.width * 0.90,
           height: MediaQuery.of(context).size.height * 0.90,
         ),

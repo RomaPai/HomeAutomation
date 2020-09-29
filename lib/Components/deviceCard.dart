@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teco1/pages/Swtiches.dart';
@@ -8,13 +9,15 @@ class Cards extends StatelessWidget{
 
   final Data user;
   final List<String> device;
+  final GlobalKey card;
+  final Function handler;
 
-  Cards({this.user, this.device});
+  Cards({this.user, this.device,this.card, this.handler});
 
   @override
   Widget build(BuildContext context) {
 
-    _title(){
+    _title(){                           // deviceId
       return Text(
         device[0].toUpperCase(),
         style: Theme.of(context)
@@ -26,7 +29,7 @@ class Cards extends StatelessWidget{
       );
     }
 
-    _subtitle(){
+    _subtitle(){                    // bedroom
       return Text(device[1],
         style: Theme.of(context)
             .textTheme
@@ -36,10 +39,27 @@ class Cards extends StatelessWidget{
         overflow: TextOverflow.ellipsis,
       );
     }
+ _switchRoute() async{
 
-    _switchRoute(){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> Switches(device[0],user)));
-    }
+   Navigator.push(
+       context,
+       MaterialPageRoute(
+           builder: (context) =>
+               Switches(device[0],user,device)));
+
+ }
+
+ _delete(){
+   return IconButton(
+     icon: Icon(
+       Icons.delete,
+       size: 30,
+       color: Colors.blueGrey[600],
+     ),
+     onPressed: () => handler(device),
+   );
+ }
+
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -56,7 +76,9 @@ class Cards extends StatelessWidget{
               EdgeInsets.only(top: 0, bottom: 0, right: 20, left: 40),
               title: _title(),
               subtitle: _subtitle(),
-              onTap: _switchRoute()
+            onTap: _switchRoute,
+            trailing: _delete(),
+
 
           )
         ],

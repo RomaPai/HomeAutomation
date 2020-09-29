@@ -68,8 +68,8 @@ class _LoginPageState extends State<LoginPage>{
               querySnapshot.docs.forEach((result) {
                 if (result.exists) {
                   List<String> appl = [];
-                  appl.add(result.data()["deviceId"]);
-                  appl.add(result.data()["bedroom"]);
+                  appl.add(result.data()["Device Id"]);
+                  appl.add(result.data()["Bedroom"]);
                   appl.add(result.id);
                   personalData.deviceList.add(appl);
                   print(personalData.deviceList);

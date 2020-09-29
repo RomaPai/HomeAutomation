@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:teco1/Components/Cards.dart';
+import 'package:teco1/Components/deviceCard.dart';
 
 import '../Data.dart';
 
 class GetListView extends StatelessWidget {
   final List<List<String>> devices;
   final Data user;
+  final GlobalKey card;
+  final Function handler;
   final controller = ScrollController();
-  GetListView({this.devices, this.user});
+  GetListView({this.devices, this.user, this.card, this.handler});
   @override
   Widget build(BuildContext context) {
     if (devices.isNotEmpty) {
@@ -25,6 +27,8 @@ class GetListView extends StatelessWidget {
                   ? Cards(
                       device: devices[index],
                       user: this.user,
+                      card: card,
+                      handler: handler,
                     )
                   : Container(
                       child: SizedBox(

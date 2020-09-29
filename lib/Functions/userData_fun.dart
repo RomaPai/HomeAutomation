@@ -19,6 +19,10 @@ Future userData(User user, BuildContext context) async{
   DocumentSnapshot ds = await ref.get();
 
   if(!ds.exists){
+    preferences = await SharedPreferences.getInstance();
+    preferences.setBool('Display', true);
+    preferences.setBool('DisplayShowcase', true);
+    preferences.setBool('FirstDisplay', false);
 
     await ref.set({
       'name' : user.displayName,
@@ -40,7 +44,8 @@ void uploadData(Data user, BuildContext context){
   user.deviceList.last.add(ref.id);
   ref.set({
     'Device Id':user.deviceList.last[0],
-    'Bedroom' : user.deviceList.last[1]
+    'Bedroom' : user.deviceList.last[1],
+    'Time Of Creation': DateTime.now().millisecondsSinceEpoch
   },SetOptions(merge: true));
   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
     builder: (context) {
@@ -68,5 +73,17 @@ Future googleUserData(GoogleSignInAccount googleSignInAccount,
     preferences.setBool('DisplayShowcase', true);
   }
 }
+
+void deleteData(Data user, List<String> devicelist) async{
+  CollectionReference reference = _db.collection("users").doc(user.uniqueId).collection("devices");
+  
+  await reference.doc(devicelist[2]).collection("Switch-list").get().then((snapshot){
+    for (DocumentSnapshot ds in snapshot.docs){
+      ds.reference.delete();
+    }
+  });
+  await reference.doc(devicelist[2]).delete();
+}
+
 
 

@@ -1,8 +1,9 @@
-import 'dart:js';
+
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:teco1/Functions/signingFun.dart';
 import 'package:teco1/Functions/userData_fun.dart';
 import 'package:teco1/pages/HomePage.dart';
@@ -17,6 +18,14 @@ class FirstPage extends StatelessWidget {
     void signInWithGoogle() async {
       try {
         User user = await signIn();
+        Fluttertoast.showToast(
+            msg: "Signing-in",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.grey,
+            textColor: Colors.white,
+            fontSize: 16.0);
         await userData(user, context);
         Navigator.pushReplacement(
           context,
