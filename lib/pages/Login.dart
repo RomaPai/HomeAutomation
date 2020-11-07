@@ -1,23 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teco1/Functions/signingFun.dart';
-import 'package:teco1/Functions/userData_fun.dart';
 import 'package:teco1/pages/HomePage.dart';
 import 'package:teco1/widgets/logInWidget.dart';
 
 import '../Data.dart';
 import 'Splash.dart';
 
-final FirebaseFirestore _db = FirebaseFirestore.instance;
+final databaseReference = FirebaseDatabase.instance.reference();
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>{
+class _LoginPageState extends State<LoginPage> {
   void _navigateToLoginPage() async {
     try {
       await Firebase.initializeApp(
@@ -34,20 +34,28 @@ class _LoginPageState extends State<LoginPage>{
       _loginAction();
     }
   }
-  void _loginAction() {
+
+  void _loginAction() async {
     if (Firebase.apps.isNotEmpty) {
       try {
         User user = FirebaseAuth.instance.currentUser;
         Data personalData;
-        _db
-            .collection("users")
-            .doc(user.uid)
-            .get()
-            .then((value) {
-          if (value.exists) {
+        await databaseReference
+            .child("users")
+            .reference()
+            .child(user.uid)
+            .reference()
+            .child("user_details")
+            .reference()
+            .once()
+            .then((DataSnapshot snapshot) {
+          if (snapshot.value != null) {
+             print(snapshot);
+             print(snapshot.value );
+
             personalData = Data(
-              name: value.data()["name"],
-              emailId: value.data()["email"],
+              name: snapshot.value["name"],
+              emailId: snapshot.value["email"],
               deviceList: [],
               uniqueId: user.uid,
             );
@@ -57,26 +65,28 @@ class _LoginPageState extends State<LoginPage>{
             });
           }
         }).then(
-              (value) {
-            _db
-                .collection("users")
-                .doc(user.uid)
-                .collection("devices")
-                .orderBy('Time Of Creation')
-                .get()
-                .then((querySnapshot) {
-              querySnapshot.docs.forEach((result) {
-                if (result.exists) {
-                  List<String> appl = [];
-                  appl.add(result.data()["Device Id"]);
-                  appl.add(result.data()["Bedroom"]);
-                  appl.add(result.id);
-                  personalData.deviceList.add(appl);
-                  print(personalData.deviceList);
+          (value)  {
+            databaseReference
+                .child("users")
+                .reference()
+                .child(user.uid)
+                .reference()
+                .child("devices")
+                .once()
+                .then((DataSnapshot snapshot) {
+              if (snapshot.value != null) {
+                var keys = snapshot.value.keys;
+                var data = snapshot.value;
+                for (var key in keys) {
+                  List<String> dev = [];
+                  dev.add(data[key]['Device Id']);
+                  dev.add(data[key]['Bedroom']);
+                  dev.add(key);
+                  personalData.deviceList.add(dev);
                 }
-              });
+              }
             }).then(
-                  (value) {
+              (value) {
                 if (personalData != null) _navigateToProfile(personalData);
               },
             );
@@ -90,8 +100,6 @@ class _LoginPageState extends State<LoginPage>{
       _navigateToLogin();
     }
   }
-
-
 
   @override
   void initState() {
@@ -113,15 +121,11 @@ class _LoginPageState extends State<LoginPage>{
       context,
       MaterialPageRoute(
         builder: (context) {
-         return FirstPage();
+          return FirstPage();
         },
       ),
     );
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {

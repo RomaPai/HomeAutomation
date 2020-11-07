@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:teco1/Components/DevicelistView.dart';
 import 'package:teco1/Data.dart';
 import 'package:teco1/Functions/signingFun.dart';
+import 'package:teco1/config.dart';
 import 'package:teco1/pages/addDevice.dart';
 import 'package:teco1/Functions/userData_fun.dart';
+import 'package:teco1/pages/example_timer.dart';
+import 'package:teco1/pages/timer_page.dart';
 import 'package:teco1/widgets/logInWidget.dart';
+import 'package:teco1/theme_changer.dart';
 
 class ProfilePage extends StatefulWidget {
   final Data personData;
@@ -62,10 +66,36 @@ class _MyProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Profile page",
+          "Profile",
           style: TextStyle(fontSize: 25, fontStyle: FontStyle.normal),
         ),
         actions: <Widget>[
+          Padding(padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+                  return AlarmManagerExampleApp();
+                }));
+              },
+              child: Icon(
+                Icons.power_settings_new,
+                size: 26,
+              ),
+            ),
+          ),
+
+          Padding(padding: EdgeInsets.only(right: 40.0),
+            child: GestureDetector(
+              onDoubleTap: (){
+                currentTheme.switchTheme();
+              },
+              child: Icon(
+                Icons.mode_edit,
+                size: 26,
+              ),
+            ),
+          ),
           Padding(padding: EdgeInsets.only(right: 20.0),
             child: GestureDetector(
               onTap: () async{
@@ -78,7 +108,7 @@ class _MyProfilePageState extends State<ProfilePage> {
                 Icons.power_settings_new,
                 size: 26,
               ),
-            )
+            ),
           )
         ],
         backgroundColor: Colors.blueAccent,
@@ -98,13 +128,12 @@ class _MyProfilePageState extends State<ProfilePage> {
                 elevation: 5,
               ),
             ),
-            GetListView(
-              devices: widget.personData.deviceList,
-              user: widget.personData,
-              card: _card,
-              handler: _delete,
-
-            ),
+          GetListView(
+            devices: widget.personData.deviceList,
+            user: widget.personData,
+            card: _card,
+            handler: _delete,
+          ),
           ],
         ),
       ),
@@ -148,7 +177,7 @@ class _MyProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    print(widget.personData.deviceList);
+
     print("cool");
   }
 }

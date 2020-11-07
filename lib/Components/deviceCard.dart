@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teco1/pages/Swtiches.dart';
@@ -13,6 +14,8 @@ class Cards extends StatelessWidget{
   final Function handler;
 
   Cards({this.user, this.device,this.card, this.handler});
+  final databaseReference = FirebaseDatabase.instance.reference();
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +44,31 @@ class Cards extends StatelessWidget{
     }
  _switchRoute() async{
 
-   Navigator.push(
-       context,
-       MaterialPageRoute(
-           builder: (context) =>
-               Switches(device[0],user,device)));
+
+  await databaseReference
+      .child("users")
+      .child(user.uniqueId)
+      .child("devices")
+      .child(device[2])
+      .child("Switch-list")
+      .reference()
+      .once().then((DataSnapshot snap) async {
+        Map v ={} ;
+        String speed;
+        int sp;
+    if (snap.value != null) {
+       v = await snap.value;
+      speed = await snap.value['Fan']['Fan Speed'];
+      sp = int.parse(speed);
+
+    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                Switches(device[0],user,device,v,sp)));
+  });
+
 
  }
 

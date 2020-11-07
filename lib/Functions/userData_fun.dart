@@ -2,51 +2,66 @@
 
 
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teco1/Data.dart';
 import 'package:teco1/pages/HomePage.dart';
 
-final FirebaseFirestore _db = FirebaseFirestore.instance;
-SharedPreferences preferences;
+
+
+final databaseReference = FirebaseDatabase.instance.reference();
 
 Future userData(User user, BuildContext context) async{
-  DocumentReference ref = _db.collection("users").doc(user.uid);
-  DocumentSnapshot ds = await ref.get();
+  DatabaseReference ref = databaseReference.child("users");
+  DatabaseReference ref2 = ref.child(user.uid).reference().child("user_details").reference();
 
-  if(!ds.exists){
-    preferences = await SharedPreferences.getInstance();
-    preferences.setBool('Display', true);
-    preferences.setBool('DisplayShowcase', true);
-    preferences.setBool('FirstDisplay', false);
-
-    await ref.set({
+     ref2.set({
       'name' : user.displayName,
       "email" : user.email,
       "uniqueId" : user.uid,
-    },SetOptions(merge:true));
-  }
-  else {
-    preferences = await SharedPreferences.getInstance();
-    preferences.setBool('Display', false);
-    preferences.setBool('FirstDisplay', false);
-  }
+    });
+
 
 }
 
 void uploadData(Data user, BuildContext context){
-  CollectionReference collectionReference  = _db.collection("users").doc(user.uniqueId).collection("devices");
-  DocumentReference ref = collectionReference.doc();
-  user.deviceList.last.add(ref.id);
-  ref.set({
+
+  DatabaseReference ref = databaseReference.child("users").reference().child(user.uniqueId).reference().child("devices");
+  var item = ref.push();
+user.deviceList.last.add(item.key);
+print(item.key);
+  item.set({
     'Device Id':user.deviceList.last[0],
     'Bedroom' : user.deviceList.last[1],
     'Time Of Creation': DateTime.now().millisecondsSinceEpoch
-  },SetOptions(merge: true));
+  });
+  if(user.deviceList.last[0].contains("4s")) {
+
+    ref.child(item.key).child("Switch-list").child("S1").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S2").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S3").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S4").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("Fan").set({"Fan Speed":"0"});
+  }
+
+  if(user.deviceList.last[0].contains("8s")){
+    ref.child(item.key).child("Switch-list").child("S1").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S2").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S3").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S4").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S5").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S6").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S7").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("S8").set({"switch value":"0"});
+    ref.child(item.key).child("Switch-list").child("Fan").set({"Fan Speed":"0"});
+  }
+
+
+
+  
   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
     builder: (context) {
       return ProfilePage(
@@ -58,31 +73,191 @@ void uploadData(Data user, BuildContext context){
 }
 
 
-Future googleUserData(GoogleSignInAccount googleSignInAccount,
-    BuildContext context, User user, bool path) async {
 
-  await _db.collection('users').doc(user.uid).set({
-    "name": googleSignInAccount.displayName,
-    "email": googleSignInAccount.email,
-    "uniqueId": user.uid,
 
-  }, SetOptions(merge: true));
-  if (path) {
-    preferences = await SharedPreferences.getInstance();
-    preferences.setBool('Display', true);
-    preferences.setBool('DisplayShowcase', true);
-  }
+
+void deleteData(Data user, List<String> devicelist) async {
+  await databaseReference.child("users").reference().child(user.uniqueId)
+      .reference().child("devices").reference().child(devicelist[2]).remove();
 }
 
-void deleteData(Data user, List<String> devicelist) async{
-  CollectionReference reference = _db.collection("users").doc(user.uniqueId).collection("devices");
-  
-  await reference.doc(devicelist[2]).collection("Switch-list").get().then((snapshot){
-    for (DocumentSnapshot ds in snapshot.docs){
-      ds.reference.delete();
-    }
+void checkData(Data user,String id, BuildContext context,String bedroom) async {
+  await databaseReference.child("users").reference().child(user.uniqueId)
+      .reference().child("devices").reference().once().then((DataSnapshot snapshot ) async {
+        if(snapshot.value!=null) {
+          Map v = {};
+          v = await snapshot.value;
+          print(v);
+          List<String> listDev = [];
+          for (String k in v.keys) {
+            listDev.add(v[k]['Device Id']);
+          }
+          print(listDev);
+          bool check;
+          print("sucess");
+          for (int i = 0; i < listDev.length; i++) {
+            if (id == listDev[i]) {
+              check = false;
+              break;
+            }
+            else{
+              check = true;
+            }
+          }
+
+          print(check);
+          if (check == true) {
+            List<String> appl = [];
+            appl.add(id);
+            appl.add(bedroom);
+            print(user.name + " " + "huiefhid");
+
+            user.deviceList.add(appl);
+            print(user.deviceList);
+            DatabaseReference ref = databaseReference.child("users").reference()
+                .child(user.uniqueId).reference()
+                .child("devices");
+            var item = ref.push();
+            user.deviceList.last.add(item.key);
+            print(item.key);
+            item.set({
+              'Device Id': user.deviceList.last[0],
+              'Bedroom': user.deviceList.last[1],
+              'Time Of Creation': DateTime
+                  .now()
+                  .millisecondsSinceEpoch
+            });
+            if (user.deviceList.last[0].contains("4s")) {
+              ref.child(item.key).child("Switch-list").child("S1").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S2").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S3").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S4").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("Fan").set(
+                  {"Fan Speed": "0"});
+            }
+
+            if (user.deviceList.last[0].contains("8s")) {
+              ref.child(item.key).child("Switch-list").child("S1").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S2").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S3").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S4").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S5").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S6").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S7").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("S8").set(
+                  {"switch value": "0"});
+              ref.child(item.key).child("Switch-list").child("Fan").set(
+                  {"Fan Speed": "0"});
+            }
+
+
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+              builder: (context) {
+                return ProfilePage(
+                  personData: user,
+                );
+              },
+            ), (route) => false);
+          }
+          else {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    title: Text(
+                      'SAME DEVICE ID ',
+                      textAlign: TextAlign.center,
+                    ),
+                    content: Text(
+                      'The Id you are trying to add already exists in your database. Please add a different id',
+                      textAlign: TextAlign.center,
+                    ),
+                    elevation: 40,
+                  );
+                });
+          }
+        }
+        else{
+          List<String> appl = [];
+          appl.add(id);
+          appl.add(bedroom);
+          print(user.name + " " + "huiefhid");
+
+          user.deviceList.add(appl);
+          print(user.deviceList);
+          DatabaseReference ref = databaseReference.child("users").reference()
+              .child(user.uniqueId).reference()
+              .child("devices");
+          var item = ref.push();
+          user.deviceList.last.add(item.key);
+          print(item.key);
+          item.set({
+            'Device Id': user.deviceList.last[0],
+            'Bedroom': user.deviceList.last[1],
+            'Time Of Creation': DateTime
+                .now()
+                .millisecondsSinceEpoch
+          });
+          if (user.deviceList.last[0].contains("4s")) {
+            ref.child(item.key).child("Switch-list").child("S1").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S2").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S3").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S4").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("Fan").set(
+                {"Fan Speed": "0"});
+          }
+
+          if (user.deviceList.last[0].contains("8s")) {
+            ref.child(item.key).child("Switch-list").child("S1").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S2").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S3").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S4").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S5").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S6").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S7").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("S8").set(
+                {"switch value": "0"});
+            ref.child(item.key).child("Switch-list").child("Fan").set(
+                {"Fan Speed": "0"});
+          }
+
+
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+            builder: (context) {
+              return ProfilePage(
+                personData: user,
+              );
+            },
+          ), (route) => false);
+        }
+
+
   });
-  await reference.doc(devicelist[2]).delete();
 }
 
 

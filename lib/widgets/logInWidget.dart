@@ -17,7 +17,8 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     void signInWithGoogle() async {
       try {
-        User user = await signIn();
+      User user =  await signIn();
+      await userData(user, context);
         Fluttertoast.showToast(
             msg: "Signing-in",
             toastLength: Toast.LENGTH_SHORT,
@@ -26,7 +27,7 @@ class FirstPage extends StatelessWidget {
             backgroundColor: Colors.grey,
             textColor: Colors.white,
             fontSize: 16.0);
-        await userData(user, context);
+        print("signin works");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -114,4 +115,5 @@ class FirstPage extends StatelessWidget {
       ),
     );
   }
+
 }
