@@ -1,6 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:teco1/Components/switchCard.dart';
 
 import '../Data.dart';
@@ -9,8 +13,8 @@ class GetSwitchList extends StatelessWidget {
   final Data user;
   final String deviceId;
   final List<String> devices;
- final Map v;
-  GetSwitchList({this.user, this.deviceId, this.devices,this.v});
+  final Map v;
+  GetSwitchList({this.user, this.deviceId, this.devices, this.v});
   final List<String> switchNumber4 = <String>['S1', 'S2', 'S3', 'S4'];
   final List<String> switchNumber8 = <String>[
     'S1',
@@ -23,16 +27,11 @@ class GetSwitchList extends StatelessWidget {
     'S8'
   ];
 
-  bool lol =false;
-
-
-
-
+  bool lol = false;
 
   @override
   Widget build(BuildContext context) {
-
- /*   void retrieveData(String s) async {
+    /*   void retrieveData(String s) async {
       await databaseReference
           .child("users")
           .child(user.uniqueId)
@@ -58,8 +57,34 @@ class GetSwitchList extends StatelessWidget {
         }
       });
     } */
-    if (deviceId.contains("4s")){
 
+    if (deviceId.contains("4s")) {
+      return GridView.builder(
+          gridDelegate:
+              new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          //itemCount: lists.length,
+          shrinkWrap: true,
+          itemCount: switchNumber4.length,
+          padding: EdgeInsets.all(15),
+          itemBuilder: (BuildContext context, int index) {
+            if (v.length != null) {
+              String val = v[switchNumber4[index]]['switch value'];
+              if (val == '0') {
+                lol = false;
+              }
+              if (val == '1') {
+                lol = true;
+              }
+            }
+            return SwitchCard(
+              user: user,
+              seitchNo: '${switchNumber4[index]}',
+              Devices: devices,
+              s: lol,
+            );
+          });
+    }
+    /* if (deviceId.contains("4s")) {
       return Expanded(
         child: Scrollbar(
           controller: ScrollController(),
@@ -69,8 +94,7 @@ class GetSwitchList extends StatelessWidget {
               controller: ScrollController(),
               itemCount: switchNumber4.length,
               itemBuilder: (BuildContext context, int index) {
-
-                if(v.length!=null) {
+                if (v.length != null) {
                   String val = v[switchNumber4[index]]['switch value'];
                   if (val == '0') {
                     lol = false;
@@ -89,20 +113,20 @@ class GetSwitchList extends StatelessWidget {
               }),
         ),
       );
-    }
+    } */
     if (deviceId.contains("8s")) {
       return Expanded(
         child: Scrollbar(
           controller: ScrollController(),
-          child: ListView.builder(
+          child: GridView.builder(
+              gridDelegate:
+              new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              //itemCount: lists.length,
               shrinkWrap: true,
-              padding: const EdgeInsets.all(12),
-              controller: ScrollController(),
               itemCount: switchNumber8.length,
+              padding: EdgeInsets.all(15),
               itemBuilder: (BuildContext context, int index) {
-
-
-                if(v.length!=null) {
+                if (v.length != null) {
                   String val = v[switchNumber8[index]]['switch value'];
                   if (val == '0') {
                     lol = false;
@@ -111,8 +135,6 @@ class GetSwitchList extends StatelessWidget {
                     lol = true;
                   }
                 }
-
-
                 return SwitchCard(
                   user: user,
                   seitchNo: '${switchNumber8[index]}',

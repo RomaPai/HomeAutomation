@@ -1,20 +1,15 @@
-import 'dart:async';
-import 'dart:isolate';
-
-import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:teco1/Data.dart';
-import 'package:teco1/pages/timer_page.dart';
-import 'package:teco1/widgets/timer_builder.dart';
 
 class SwitchCard extends StatefulWidget {
   final Data user;
   final String seitchNo;
   final List<String> Devices;
-  bool s;
+  final bool s;
 
   SwitchCard({this.user, this.seitchNo, this.Devices, this.s});
 
@@ -27,26 +22,19 @@ class _MySwitchCardState extends State<SwitchCard> {
   final Data user;
   final String seitchno;
   final List<String> Devices;
-  int time;
+
   String data = "0";
-  _MySwitchCardState(this.user, this.seitchno, this.Devices, this.s);
+
+  _MySwitchCardState(
+    this.user,
+    this.seitchno,
+    this.Devices,
+    this.s,
+  );
 
   final databaseReference = FirebaseDatabase.instance.reference();
-  final int helloAlarmID = 0;
+
 // using android alarm manager : Kishan bhaiya.
-  void printHello() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await AndroidAlarmManager.initialize();
-    await AndroidAlarmManager.periodic(
-        const Duration(seconds: 5), helloAlarmID, p);
-  }
-
-  void p(){
-    final DateTime now = DateTime.now();
-    final int isolateId = Isolate.current.hashCode;
-    print("[$now] Hello, world! isolate= ${isolateId} function='$printHello'");
-  }
-
 
   void uploadData(String index) {
     DatabaseReference ref = databaseReference
@@ -80,79 +68,74 @@ class _MySwitchCardState extends State<SwitchCard> {
         }
       });
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-    retrieveDatat();
+
     return Card(
+      color: HexColor("#1A1A1A"),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.white70, width: 1),
-        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.white70, width: 3),
+        borderRadius: BorderRadius.circular(5),
+
       ),
-      margin: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+      margin: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
       elevation: 5,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: ListTile(
-                  contentPadding:
-                      EdgeInsets.only(top: 0, bottom: 0, right: 20, left: 40),
-                  title: Text(widget.seitchNo),
-                ),
-              ),
-              SizedBox(
-                width: 50.0,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                 await printHello();
-                 print("PARAM");
-                },
-                child: Text("SET"),
-              ),
-              SizedBox(
-                width: 50.0,
-              ),
-              Expanded(
-                  child: Switch(
-                value: s,
-                onChanged: (bool value) {
-                  setState(() {
-                    s = value;
-                    if (value == false) {
-                      uploadData('0');
-                      Fluttertoast.showToast(
-                          msg: "$seitchno is  Off",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.grey,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    } else {
-                      uploadData('1');
-                      Fluttertoast.showToast(
-                          msg: "$seitchno is  On",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.grey,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    }
-                  });
-                },
-              ))
-            ],
+          Expanded(
+            child: ListTile(
+              contentPadding:
+                  EdgeInsets.only(top: 0, bottom: 0, right: 20, left: 40),
+              title: Text(widget.seitchNo,style: TextStyle(color: Colors.white),),
+            ),
           ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Expanded(
+              child: Switch(
+            activeColor: Colors.green,
+            inactiveTrackColor: Colors.redAccent,
+            value: s,
+            onChanged: (bool value) {
+              setState(() {
+                s = value;
+                if (value == false) {
+                  uploadData('0');
+                  Fluttertoast.showToast(
+                      msg: "$seitchno is  Off",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else {
+                  uploadData('1');
+                  Fluttertoast.showToast(
+                      msg: "$seitchno is  On",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+              });
+            },
+          )),
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveDatat();
   }
 }
 /*void startTimer(int t) {
@@ -191,4 +174,15 @@ class _MySwitchCardState extends State<SwitchCard> {
       });
 
     });
-  } */
+  } 
+  
+  void p(DateTime now) {
+    print(now);
+    print("Fuck engineering");
+  }
+
+  functionCall() async {
+    print('YO1');
+    DateTime n = DateTime.now();
+    await Isolate.spawn(p, n);
+  }*/

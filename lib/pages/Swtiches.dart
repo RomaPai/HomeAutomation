@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:teco1/Components/SwitchListView.dart';
 import 'package:teco1/Functions/userData_fun.dart';
 
@@ -90,22 +91,25 @@ class _SwitchesState extends State<Switches> {
         }
       });
     });
-
   }
+
+
 
   @override
   Widget build(BuildContext context) {
-    retrieveDatat();
+
     return Scaffold(
+      backgroundColor: HexColor("#1A1A1A"),
       appBar: AppBar(
+        backgroundColor: HexColor("#BF0000"),
         title: Text(
           "Control Switches",
           style: TextStyle(fontSize: 25, fontStyle: FontStyle.normal),
         ),
-        backgroundColor: Colors.blueAccent,
+
       ),
       body: Container(
-        decoration: BoxDecoration(color: Color(0x9fcad8f0)),
+        decoration: BoxDecoration(color: HexColor("#1A1A1A")),
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -133,7 +137,8 @@ class _SwitchesState extends State<Switches> {
               style: TextStyle(
                   fontSize: 25,
                   fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
+              color: Colors.white),
             ),
             SizedBox(
               height: 10.0,
@@ -144,7 +149,7 @@ class _SwitchesState extends State<Switches> {
                 max: 5,
                 divisions: 6,
                 activeColor: Colors.green,
-                inactiveColor: Colors.grey,
+                inactiveColor: Colors.redAccent,
                 label: '${speed.round()}',
                 onChanged: (double newValue) {
                   setState(() {
@@ -157,11 +162,17 @@ class _SwitchesState extends State<Switches> {
                 }),
             Text(
               '$speed',
-              style: TextStyle(fontSize: 22),
+              style: TextStyle(fontSize: 22,color: Colors.white),
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveDatat();
   }
 }

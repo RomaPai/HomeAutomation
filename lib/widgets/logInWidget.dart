@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:teco1/Functions/signingFun.dart';
 import 'package:teco1/Functions/userData_fun.dart';
@@ -58,8 +59,9 @@ class FirstPage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
-        color: Colors.white70,
+        color: Colors.white38,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -69,10 +71,18 @@ class FirstPage extends StatelessWidget {
                   image: AssetImage("assets/teco_log.jpeg"),
                   height: 200.0,
                   width: 200.0),
+
               SizedBox(height: 30),
               Text("TecoNico",
                   style: TextStyle(
-                      fontSize: 40,
+                      fontSize: 50,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold)),
+              SizedBox(height: 30),
+              Text("Home Automation",
+                  style: TextStyle(
+                      fontSize: 30,
                       color: Colors.black,
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold)),
@@ -80,12 +90,35 @@ class FirstPage extends StatelessWidget {
               OutlineButton(
                 splashColor: Colors.grey,
                 onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          title: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text('Loading'),
+                              SpinKitCircle(
+                                size: 25,
+                                color: Theme.of(context).indicatorColor,
+                              ),
+                            ],
+                          ),
+                          elevation: 40,
+                        );
+                      });
                   signInWithGoogle();
                 },
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40)),
+                    borderRadius: BorderRadius.circular(40),
+                ),
                 highlightElevation: 0,
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: BorderSide(color: Colors.black),
+                highlightedBorderColor: Colors.black,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: Row(
@@ -101,7 +134,7 @@ class FirstPage extends StatelessWidget {
                           'Sign in with Google',
                           style: TextStyle(
                             fontSize: 20,
-                            color: Colors.grey,
+                            color: Colors.black,
                           ),
                         ),
                       )

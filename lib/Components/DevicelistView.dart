@@ -9,10 +9,12 @@ class GetListView extends StatelessWidget {
   final Data user;
   final GlobalKey card;
   final Function handler;
+
   final controller = ScrollController();
   GetListView({this.devices, this.user, this.card, this.handler});
   @override
   Widget build(BuildContext context) {
+    final String name = user.name;
     if (devices.isNotEmpty) {
       return Expanded(
         child: Scrollbar(
@@ -45,12 +47,14 @@ class GetListView extends StatelessWidget {
             vertical: MediaQuery.of(context).size.height * 0.04,
             horizontal: MediaQuery.of(context).size.width * 0.015,
           ),
+
           child: Text(
-            "Add a device by clicking on the button below",
+              "Add the unique ID given above in the device !",
             style: TextStyle(
                 fontSize: 40.0,
                 fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold),
+                fontWeight: FontWeight.bold,
+            color: Colors.white),
           ));
     }
   }
