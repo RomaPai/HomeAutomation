@@ -29,36 +29,51 @@ class _MyProfilePageState extends State<ProfilePage> {
         builder: (context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(8),
             ),
-            backgroundColor: Colors.grey,
+            // backgroundColor: Colors.grey,
             title: Text(
-              'Do you want to delete this appliance?',
+              'Do you want to delete this device?',
               textAlign: TextAlign.center,
             ),
             content: Text(
-              'All information will be permanently lost',
+              'All information will be permanently lost.',
               textAlign: TextAlign.center,
             ),
-            elevation: 40,
+            elevation: 20,
             actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('NO'),
-                color: Colors.redAccent,
-              ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pop(context);
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
 
-                  setState(() {
-                    deleteData(widget.personData, device);
-                    widget.personData.deviceList.remove(device);
-                  });
-                },
-                color: Colors.redAccent,
-                child: Text('YES'),
-              )
+                      setState(() {
+                        deleteData(widget.personData, device);
+                        widget.personData.deviceList.remove(device);
+                      });
+                    },
+                    // color: Colors.redAccent,
+                    child: Text(
+                      'YES',
+                      style: TextStyle(
+                          color: Colors.black38,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16),
+                    ),
+                  ),
+                  FlatButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('NO',
+                        style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16)),
+                    // color: Colors.redAccent,
+                  ),
+                ],
+              ),
             ],
           );
         });
@@ -92,8 +107,10 @@ class _MyProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: HexColor("#1A1A1A"),
+      // backgroundColor: HexColor("#1A1A1A"),
+
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           "Home",
           style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
@@ -102,112 +119,56 @@ class _MyProfilePageState extends State<ProfilePage> {
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: GestureDetector(
-              onTap: () async {
+              onTap: () {
                 showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                      return Container(
+                        child: SpinKitCircle(
+                          size: 70,
+                          color: Theme.of(context).indicatorColor,
                         ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('Loading'),
-                            SpinKitCircle(
-                              size: 25,
-                              color: Theme.of(context).indicatorColor,
-                            ),
-                          ],
-                        ),
-                        elevation: 40,
                       );
                     });
-                await signOutGoogle();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) {
-                  return FirstPage();
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Profile(
+                    user: widget.personData,
+                  );
                 }));
               },
               child: Icon(
-                Icons.power_settings_new,
-                size: 26,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 10.0,
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () async {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('Loading'),
-                            SpinKitCircle(
-                              size: 25,
-                              color: Theme.of(context).indicatorColor,
-                            ),
-                          ],
-                        ),
-                        elevation: 40,
-                      );
-                    });
-                await Navigator.maybePop(context);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) {
-                  return Profile(widget.personData,user: widget.personData);
-                }));
-              },
-              child: Icon(
-                Icons.people,
+                Icons.person,
                 size: 26,
               ),
             ),
           )
         ],
-        backgroundColor: HexColor("#BF0000"),
+        backgroundColor: HexColor('608fc7'),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: HexColor("#1A1A1A"),
+          color: Colors.white
         ),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20.0,
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-              child: Card(
-                color: Colors.redAccent,
-                margin: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
-                elevation: 5,
-                child: _profileHead(context),
+        child:
+          Column(
+            children:<Widget>[
+              SizedBox(
+                height: 20.0,
               ),
-            ),
-            GetListView(
-              devices: widget.personData.deviceList,
-              user: widget.personData,
-              card: _card,
-              handler: _delete,
-            ),
-          ],
-        ),
+              GetListView(
+                devices: widget.personData.deviceList,
+                user: widget.personData,
+                card: _card,
+                handler: _delete,
+              ),
+            ],
+          ),
+
       ),
       floatingActionButton: RawMaterialButton(
-          fillColor: HexColor("#BF0000"),
-          splashColor: Colors.redAccent,
+          fillColor: HexColor("4075b4"),
+          splashColor: HexColor("37659b"),
           shape: StadiumBorder(),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),

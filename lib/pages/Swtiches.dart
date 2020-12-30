@@ -93,79 +93,76 @@ class _SwitchesState extends State<Switches> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: HexColor("#1A1A1A"),
       appBar: AppBar(
-        backgroundColor: HexColor("#BF0000"),
+        centerTitle: true,
+        backgroundColor: HexColor('608fc7'),
         title: Text(
-          "Control Switches",
+          devices[1],
           style: TextStyle(fontSize: 25, fontStyle: FontStyle.normal),
         ),
-
-      ),
-      body: Container(
-        decoration: BoxDecoration(color: HexColor("#1A1A1A")),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20.0,
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-              child: Card(
-                margin: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
-                elevation: 5,
-              ),
-            ),
-            GetSwitchList(
-              deviceId: deviceIdNo,
-              user: widget.user,
-              devices: widget.devices,
-              v: v,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              "Fan Speed",
-              style: TextStyle(
-                  fontSize: 25,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.bold,
-              color: Colors.white),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Slider(
-                value: speed.toDouble(),
-                min: 0,
-                max: 5,
-                divisions: 6,
-                activeColor: Colors.green,
-                inactiveColor: Colors.redAccent,
-                label: '${speed.round()}',
-                onChanged: (double newValue) {
-                  setState(() {
-                    speed = newValue.round();
-                    uploadData(speed.toString());
-                  });
+        actions: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: GestureDetector(
+                child: Icon(Icons.wifi, size: 20),
+                onTap: () {
+                  resetWifi();
                 },
-                semanticFormatterCallback: (double newValue) {
-                  return '${newValue.round()}';
-                }),
-            Text(
-              '$speed',
-              style: TextStyle(fontSize: 22,color: Colors.white),
+              )),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          GetSwitchList(
+            deviceId: deviceIdNo,
+            user: widget.user,
+            devices: widget.devices,
+            v: v,
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Text(
+            "Fan Speed:" + ' $speed',
+            style: TextStyle(
+              fontSize: 20,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
             ),
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          Slider(
+              value: speed.toDouble(),
+              min: 0,
+              max: 5,
+              divisions: 5,
+              activeColor: HexColor('4075b4'),
+              inactiveColor: HexColor('dee7f3'),
+              // activeColor: Colors.green,
+              // inactiveColor: Colors.redAccent,
+              label: '${speed.round()}',
+              onChanged: (double newValue) {
+                setState(() {
+                  speed = newValue.round();
+                  uploadData(speed.toString());
+                });
+              },
+              semanticFormatterCallback: (double newValue) {
+                return '${newValue.round()}';
+              }),
+          Text(
+            '$speed',
+            style: TextStyle(fontSize: 22, color: Colors.white),
+          ),
+        ],
       ),
     );
   }
@@ -175,4 +172,57 @@ class _SwitchesState extends State<Switches> {
     super.initState();
     retrieveDatat();
   }
+
+  void resetWifi() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            title: Text(
+              'Do you want to reset the wifi?',
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              'Are you sure?',
+              textAlign: TextAlign.center,
+            ),
+            elevation: 20,
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('NO',
+                    style: TextStyle(
+                        color: Colors.redAccent,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16)),
+              ),
+              FlatButton(
+                onPressed: () {
+                  databaseReference
+                      .child("users")
+                      .child(user.uniqueId)
+                      .child("devices")
+                      .child(devices[2])
+                      .child("Switch-list")
+                      .child("ResetWifi")
+                      .set({"value": "1"});
+
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'YES',
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
 }

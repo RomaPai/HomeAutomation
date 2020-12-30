@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:teco1/Data.dart';
 import 'package:teco1/pages/HomePage.dart';
@@ -12,7 +12,7 @@ final databaseReference = FirebaseDatabase.instance.reference();
 Future userData(User user, BuildContext context) async {
   DatabaseReference ref = databaseReference.child("users");
   DatabaseReference ref2 =
-      ref.child(user.uid).reference().child("user_details").reference();
+  ref.child(user.uid).reference().child("user_details").reference();
 
   ref2.set({
     'name': user.displayName,
@@ -21,108 +21,109 @@ Future userData(User user, BuildContext context) async {
   });
 }
 
-void uploadData(Data user, BuildContext context,String id) {
-  DatabaseReference ref = databaseReference
-      .child("users")
-      .reference()
-      .child(user.uniqueId)
-      .reference()
-      .child("devices");
-  var item = ref.child(user.deviceList.last[0]);
-  user.deviceList.last.add(item.key);
-  print(item.key);
-  item.set({
-    'Device Id': user.deviceList.last[0],
-    'Bedroom': user.deviceList.last[1],
-    'Time Of Creation': DateTime.now().millisecondsSinceEpoch
-  });
-  if (user.deviceList.last[0].contains("4s")) {
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S1")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S2")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S3")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S4")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("Fan")
-        .set({"Fan Speed": "0"});
-  }
+// void uploadData(Data user, BuildContext context, String id) {
+//   DatabaseReference ref = databaseReference
+//       .child("users")
+//       .reference()
+//       .child(user.uniqueId)
+//       .reference()
+//       .child("devices");
+//   var item = ref.child(user.deviceList.last[0]);
+//   user.deviceList.last.add(item.key);
+//   print(item.key);
+//   item.set({
+//     'Device Id': user.deviceList.last[0],
+//     'Bedroom': user.deviceList.last[1],
+//     'Time Of Creation': DateTime.now().millisecondsSinceEpoch
+//   });
+//   if (user.deviceList.last[0].contains("4s")) {
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S1")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S2")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S3")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S4")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("Fan")
+//         .set({"Fan Speed": "0"});
+//   }
 
-  if (user.deviceList.last[0].contains("8s")) {
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S1")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S2")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S3")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S4")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S5")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S6")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S7")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("S8")
-        .set({"switch value": "0"});
-    ref
-        .child(item.key)
-        .child("Switch-list")
-        .child("Fan")
-        .set({"Fan Speed": "0"});
-  }
+//   if (user.deviceList.last[0].contains("8s")) {
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S1")
+//         .set({"switch value": "0",
+//         "Alarm Time":" ",
+//         });
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S2")
+//         .set({"switch value": "0",});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S3")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S4")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S5")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S6")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S7")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("S8")
+//         .set({"switch value": "0"});
+//     ref
+//         .child(item.key)
+//         .child("Switch-list")
+//         .child("Fan")
+//         .set({"Fan Speed": "0"});
+//   }
 
-  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-    builder: (context) {
-      return ProfilePage(
-        personData: user,
-      );
-    },
-  ), (route) => false);
-}
+//   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+//     builder: (context) {
+//       return ProfilePage(
+//         personData: user,
+//       );
+//     },
+//   ), (route) => false);
+// }
 
 void deleteData(Data user, List<String> devicelist) async {
-
   await databaseReference
       .child("users")
       .reference()
@@ -132,13 +133,24 @@ void deleteData(Data user, List<String> devicelist) async {
       .reference()
       .child(devicelist[2])
       .remove();
-
-
 }
 
 void checkData(
     Data user, String id, BuildContext context, String bedroom) async {
-
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          //  shape: RoundedRectangleBorder(
+          //    borderRadius: BorderRadius.circular(8),
+          //  ),
+          child: SpinKitCircle(
+            size: 70,
+            color: Theme.of(context).indicatorColor,
+          ),
+          // elevation: 20,
+        );
+      });
   await databaseReference
       .child("users")
       .reference()
@@ -172,6 +184,7 @@ void checkData(
       if (check == true) {
         bool f = false;
         if (id == "" || bedroom == "") {
+          Navigator.pop(context);
           print(f);
           print("stopppp");
           showDialog(
@@ -181,7 +194,7 @@ void checkData(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Colors.white,
                   title: Text(
                     'EMPTY ID OR BEDROOM ',
                     textAlign: TextAlign.center,
@@ -193,7 +206,6 @@ void checkData(
                   elevation: 40,
                 );
               });
-
         } else {
           List<String> appl = [];
           appl.add(id);
@@ -220,23 +232,32 @@ void checkData(
             ref
                 .child(item.key)
                 .child("Switch-list")
+                .child("ResetWifi")
+                .set({"value": "0"});
+            ref
+                .child(item.key)
+                .child("Switch-list")
                 .child("S1")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S2")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S3")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S4")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
@@ -248,48 +269,63 @@ void checkData(
             ref
                 .child(item.key)
                 .child("Switch-list")
+                .child("ResetWifi")
+                .set({"value": "0"});
+            ref
+                .child(item.key)
+                .child("Switch-list")
                 .child("S1")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',
+            });
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S2")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S3")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S4")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S5")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S6")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S7")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("S8")
-                .set({"switch value": "0"});
+                .set({"switch value": "0",
+              "Alarm Time":' ',});
             ref
                 .child(item.key)
                 .child("Switch-list")
                 .child("Fan")
-                .set({"Fan Speed": "0"});
+                .set({"Fan Speed": "0",
+              "Alarm Time":' ',});
           }
 
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
@@ -299,17 +335,9 @@ void checkData(
               );
             },
           ), (route) => false);
-          Fluttertoast.showToast(
-              msg:
-                  "$id for $bedroom has been successfully added in your Device list",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.grey,
-              textColor: Colors.white,
-              fontSize: 16.0);
         }
       } else {
+        Navigator.pop(context);
         showDialog(
             context: context,
             builder: (context) {
@@ -317,7 +345,7 @@ void checkData(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.white,
                 title: Text(
                   'SAME DEVICE ID ',
                   textAlign: TextAlign.center,
@@ -332,6 +360,7 @@ void checkData(
       }
     } else {
       if (id == "" || bedroom == "") {
+        Navigator.pop(context);
         showDialog(
             context: context,
             builder: (context) {
@@ -339,7 +368,7 @@ void checkData(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.white,
                 title: Text(
                   'EMPTY ID OR BEDROOM ',
                   textAlign: TextAlign.center,
@@ -377,76 +406,101 @@ void checkData(
           ref
               .child(item.key)
               .child("Switch-list")
+              .child("ResetWifi")
+              .set({"value": "0"});
+          ref
+              .child(item.key)
+              .child("Switch-list")
               .child("S1")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S2")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S3")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S4")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("Fan")
-              .set({"Fan Speed": "0"});
+              .set({"Fan Speed": "0",
+            "Alarm Time":' ',});
         }
 
         if (user.deviceList.last[0].contains("8s")) {
           ref
               .child(item.key)
               .child("Switch-list")
+              .child("ResetWifi")
+              .set({"value": "0"});
+          ref
+              .child(item.key)
+              .child("Switch-list")
               .child("S1")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',
+          });
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S2")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S3")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S4")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S5")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S6")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S7")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("S8")
-              .set({"switch value": "0"});
+              .set({"switch value": "0",
+            "Alarm Time":' ',});
           ref
               .child(item.key)
               .child("Switch-list")
               .child("Fan")
-              .set({"Fan Speed": "0"});
+              .set({"Fan Speed": "0",
+          });
         }
 
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
@@ -456,15 +510,6 @@ void checkData(
             );
           },
         ), (route) => false);
-        Fluttertoast.showToast(
-            msg:
-                "$id for $bedroom has been successfully added in your Device list",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.grey,
-            textColor: Colors.white,
-            fontSize: 16.0);
       }
     }
   });

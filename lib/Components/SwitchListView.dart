@@ -29,61 +29,49 @@ class GetSwitchList extends StatelessWidget {
 
   bool lol = false;
 
+
+
   @override
   Widget build(BuildContext context) {
-    /*   void retrieveData(String s) async {
-      await databaseReference
-          .child("users")
-          .child(user.uniqueId)
-          .child("devices")
-          .child(devices[2])
-          .child("Switch-list")
-          .child(s)
-          .reference()
-          .once()
-          .then((DataSnapshot snap) async {
-        if (snap.value != null) {
-          v = await snap.value['switch value'];
-          print(v + " " + s);
-          if (v == '0') {
-            lol = false;
-            print(lol);
-          } else if (v == '1') {
-            lol = true;
-
-          }
-          print(lol);
-          print(s);
-        }
-      });
-    } */
 
     if (deviceId.contains("4s")) {
-      return GridView.builder(
-          gridDelegate:
-              new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          //itemCount: lists.length,
-          shrinkWrap: true,
-          itemCount: switchNumber4.length,
-          padding: EdgeInsets.all(15),
-          itemBuilder: (BuildContext context, int index) {
-            if (v.length != null) {
-              String val = v[switchNumber4[index]]['switch value'];
-              if (val == '0') {
-                lol = false;
-              }
-              if (val == '1') {
-                lol = true;
-              }
-            }
-            return SwitchCard(
-              user: user,
-              seitchNo: '${switchNumber4[index]}',
-              Devices: devices,
-              s: lol,
-            );
-          });
+      return Expanded(
+        child: Scrollbar(
+          controller: ScrollController(),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.builder(
+
+                gridDelegate:
+                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                // itemCount: lists.length,
+                shrinkWrap: true,
+                itemCount: switchNumber4.length,
+                padding: EdgeInsets.symmetric(horizontal:16,vertical: 16),
+                itemBuilder: (BuildContext context, int index) {
+                  String time = v[switchNumber4[index]]['Alarm Time'];
+                    String val = v[switchNumber4[index]]['switch value'];
+
+                    if (val == '0') {
+                      lol = false;
+                    }
+                    if (val == '1') {
+                      lol = true;
+                    }
+
+                  return SwitchCard(
+                    user: user,
+                    seitchNo: '${switchNumber4[index]}',
+                    Devices: devices,
+                    s: lol,
+                    alarmTime: time,
+                  );
+                }),
+          ),
+        ),
+      );
     }
+
     /* if (deviceId.contains("4s")) {
       return Expanded(
         child: Scrollbar(
@@ -118,30 +106,35 @@ class GetSwitchList extends StatelessWidget {
       return Expanded(
         child: Scrollbar(
           controller: ScrollController(),
-          child: GridView.builder(
-              gridDelegate:
-              new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-              //itemCount: lists.length,
-              shrinkWrap: true,
-              itemCount: switchNumber8.length,
-              padding: EdgeInsets.all(15),
-              itemBuilder: (BuildContext context, int index) {
-                if (v.length != null) {
-                  String val = v[switchNumber8[index]]['switch value'];
-                  if (val == '0') {
-                    lol = false;
-                  }
-                  if (val == '1') {
-                    lol = true;
-                  }
-                }
-                return SwitchCard(
-                  user: user,
-                  seitchNo: '${switchNumber8[index]}',
-                  Devices: devices,
-                  s: lol,
-                );
-              }),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.builder(
+
+                gridDelegate:
+                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                // itemCount: lists.length,
+                shrinkWrap: true,
+                itemCount: switchNumber8.length,
+                padding: EdgeInsets.symmetric(horizontal:16,vertical: 16),
+                itemBuilder: (BuildContext context, int index) {
+                  String time = v[switchNumber8[index]]['Alarm Time'];
+                    String val = v[switchNumber8[index]]['switch value'];
+                    if (val == '0') {
+                      lol = false;
+                    }
+                    if (val == '1') {
+                      lol = true;
+                    }
+
+                  return SwitchCard(
+                    user: user,
+                    seitchNo: '${switchNumber8[index]}',
+                    Devices: devices,
+                    s: lol,
+                    alarmTime: time,
+                  );
+                }),
+          ),
         ),
       );
     } else {

@@ -44,17 +44,19 @@ class GetListView extends StatelessWidget {
     } else {
       return Container(
           padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height * 0.04,
-            horizontal: MediaQuery.of(context).size.width * 0.015,
+            vertical: MediaQuery.of(context).size.height * 0.06,
+            horizontal: MediaQuery.of(context).size.width * 0.15,
           ),
-
-          child: Text(
-              "Add the unique ID given above in the device !",
-            style: TextStyle(
-                fontSize: 40.0,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
-            color: Colors.white),
+          child: Center(
+            child: Text(
+              "Your list seems empty. Add a device by clicking on the button below.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 24.0,
+                letterSpacing: 0.9,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
           ));
     }
   }

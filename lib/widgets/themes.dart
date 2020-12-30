@@ -17,14 +17,14 @@ ThemeData appTheme() {
       ),
     ),
     fontFamily: 'Montserrat',
-    backgroundColor: HexColor("#1A1A1A"),
-    splashColor: Colors.red,
-    indicatorColor: Colors.red,
-    primarySwatch: Colors.red,
+    backgroundColor: HexColor('608fc7'),
+    splashColor: HexColor("acc4e1"),
+    indicatorColor: HexColor("37659b"),
+    // primarySwatch: HexColor("37659b"),
     buttonColor: HexColor("#BF0000"),
     iconTheme: IconThemeData(
       size: 25,
-      color: Colors.red,
+      color: HexColor('608fc7'),
     ),
     cardTheme: CardTheme(
       shape: RoundedRectangleBorder(
@@ -47,7 +47,7 @@ ThemeData appTheme() {
     buttonTheme: ButtonThemeData(
       //  padding: EdgeInsets.all(10),
       shape: StadiumBorder(),
-      buttonColor: Color(0XFF54B0F3),
+      buttonColor: HexColor('608fc7'),
     ),
   );
 }
