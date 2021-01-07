@@ -59,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
               deviceList: [],
               uniqueId: user.uid,
             );
+
           } else {
             signOutGoogle().then((value) {
               _navigateToLogin();

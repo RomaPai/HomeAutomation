@@ -1,10 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:teco1/Components/switchCard.dart';
 
 import '../Data.dart';
@@ -26,6 +23,8 @@ class GetSwitchList extends StatelessWidget {
     'S7',
     'S8'
   ];
+//  final List idList4 = [1,2,3,4];
+ // final List idList8 = [1,2,3,4,5,6,7,8];
 
   bool lol = false;
 
@@ -51,6 +50,8 @@ class GetSwitchList extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   String time = v[switchNumber4[index]]['Alarm Time'];
                     String val = v[switchNumber4[index]]['switch value'];
+                    print(time);
+                    print(switchNumber4[index]);
 
                     if (val == '0') {
                       lol = false;
@@ -64,7 +65,7 @@ class GetSwitchList extends StatelessWidget {
                     seitchNo: '${switchNumber4[index]}',
                     Devices: devices,
                     s: lol,
-                    alarmTime: time,
+                    //notificationId: index,
                   );
                 }),
           ),
@@ -119,6 +120,8 @@ class GetSwitchList extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   String time = v[switchNumber8[index]]['Alarm Time'];
                     String val = v[switchNumber8[index]]['switch value'];
+                    print(time);
+                    print(switchNumber8[index]);
                     if (val == '0') {
                       lol = false;
                     }
@@ -131,7 +134,7 @@ class GetSwitchList extends StatelessWidget {
                     seitchNo: '${switchNumber8[index]}',
                     Devices: devices,
                     s: lol,
-                    alarmTime: time,
+                    //notificationId: index,
                   );
                 }),
           ),

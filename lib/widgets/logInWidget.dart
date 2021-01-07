@@ -82,21 +82,15 @@ class FirstPage extends StatelessWidget {
                   showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                        return Container(
+                          //  shape: RoundedRectangleBorder(
+                          //    borderRadius: BorderRadius.circular(8),
+                          //  ),
+                          child: SpinKitCircle(
+                            size: 70,
+                            color: Theme.of(context).indicatorColor,
                           ),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text('Loading'),
-                              SpinKitCircle(
-                                size: 25,
-                                color: Theme.of(context).indicatorColor,
-                              ),
-                            ],
-                          ),
-                          elevation: 40,
+                          // elevation: 20,
                         );
                       });
                   signInWithGoogle();
