@@ -9,7 +9,7 @@ import 'dart:ui';
 
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -17,19 +17,17 @@ FlutterLocalNotificationsPlugin();
 const String countKey = 'count';
 const String isolateName = 'isolate';
 final ReceivePort port = ReceivePort();
-SharedPreferences prefs;
 
+//io.flutter.app.FlutterApplication
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
   IsolateNameServer.registerPortWithName(
     port.sendPort,
     isolateName,
   );
-  prefs = await SharedPreferences.getInstance();
-  if (!prefs.containsKey(countKey)) {
-    await prefs.setInt(countKey, 0);
-  }
+
 
   var initializationSettingsAndroid = AndroidInitializationSettings('logo');
   var initializationSettingsIOS = IOSInitializationSettings(
@@ -44,7 +42,6 @@ void main() async {
     initializationSettings,
   );
   print('after initialise');
-
   runApp(MyApp());
 }
 

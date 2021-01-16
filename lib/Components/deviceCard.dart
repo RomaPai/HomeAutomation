@@ -20,14 +20,20 @@ class Cards extends StatelessWidget {
   Widget build(BuildContext context) {
     _title() {
       // deviceId
-      return Text(
-        device[1].toUpperCase(),
-        style: Theme.of(context).textTheme.headline6.copyWith(
-              fontWeight: FontWeight.w400,
-            ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
+      if(device[1]!=null) {
+        return Text(
+          device[1],
+          style: Theme
+              .of(context)
+              .textTheme
+              .headline6
+              .copyWith(
+            fontWeight: FontWeight.w400,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        );
+      }
     }
 
 

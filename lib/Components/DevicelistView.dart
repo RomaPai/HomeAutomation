@@ -14,7 +14,7 @@ class GetListView extends StatelessWidget {
   GetListView({this.devices, this.user, this.card, this.handler});
   @override
   Widget build(BuildContext context) {
-    final String name = user.name;
+    //final String name = user.name;
     if (devices.isNotEmpty) {
       return Expanded(
         child: Scrollbar(
