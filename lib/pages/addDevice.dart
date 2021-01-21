@@ -8,12 +8,17 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:teco1/Functions/userData_fun.dart';
 
 import '../Data.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+
+import 'package:image_picker/image_picker.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
 class AddDevice extends StatefulWidget {
   final Data user;
-
-  AddDevice({this.user});
+  final String scanDevice;
+  AddDevice({this.user, this.scanDevice});
 
   @override
   _AddDeviceState createState() => _AddDeviceState();
@@ -22,25 +27,46 @@ class AddDevice extends StatefulWidget {
 class _AddDeviceState extends State<AddDevice> {
   TextEditingController _inputController;
 
-  String _dropdownValue = 'Hall';
-
-  String deviceId = "";
-
   String bedroom = "";
 
-  var _room = [
-    "Hall",
-    "Dining Area",
-    "Bedroom 1",
-    "Bedroom 2",
-    "Kitchen",
-    "Bathroom 1",
-    "Bathroom 2"
-  ];
+  File _image;
+  final picker = ImagePicker();
+
+  Future imageFromCamera() async {
+    final pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+        imageQuality: 50,
+        maxHeight: 120,
+        maxWidth: 100);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imageFromGallery() async {
+    final pickedFile = await picker.getImage(
+        source: ImageSource.gallery,
+        imageQuality: 50,
+        maxHeight: 120,
+        maxWidth: 100);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    this._inputController = new TextEditingController();
+    this._inputController = TextEditingController(text: widget.scanDevice);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: HexColor('608fc7'),
@@ -57,12 +83,10 @@ class _AddDeviceState extends State<AddDevice> {
               ),
               ListTile(
                 title: TextField(
-                  // style: TextStyle(color: Colors.white),
                   controller: this._inputController,
                   readOnly: true,
                   decoration: InputDecoration(
-                    labelText: 'Scan QR-Code to add Device',
-                    // labelStyle: TextStyle(color: Colors.white),
+                    hintText: widget.scanDevice,
                     contentPadding: EdgeInsets.only(left: 20),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -71,92 +95,81 @@ class _AddDeviceState extends State<AddDevice> {
                     hoverColor: Colors.white,
                   ),
                 ),
-                // focusColor: Colors.white38,
               ),
               const SizedBox(
                 height: 16.0,
               ),
-              Center(
-                child: Container(
-                  child: RaisedButton(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    child: Text("Scan QR-Code", style: TextStyle(fontSize: 20)),
-                    color: HexColor('4075b4'),
-                    textColor: Colors.white,
-                    onPressed: () async {
-                      _scan();
-                    },
-                  ),
-                ),
-              ),
+
               const SizedBox(
                 height: 60.0,
               ),
-              // ListTile(
-              //   title: TextFormField(
-              //     // style: TextStyle(color: Colors.white),
-              //     initialValue: bedroom,
-              //     onChanged: (value) {
-              //       bedroom = value;
-              //     },
-              //     validator: (value) {
-              //       if (value.isEmpty) {
-              //         return 'This field is required';
-              //       }
-              //       return null;
-              //     },
-              //     decoration: InputDecoration(
-              //       labelText: 'Room',
-              //       // labelStyle: TextStyle(color: Colors.white),
-              //       contentPadding: EdgeInsets.only(left: 20),
-              //       border: OutlineInputBorder(
-              //           borderRadius: BorderRadius.all(Radius.circular(15)),
-              //           // borderSide: BorderSide(color: Colors.white)
-              //           ),
-              //     ),
-              //   ),
-              // ),
-              Container(
-                height: 62,
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: InputDecorator(
-                  expands: false,
+              ListTile(
+                title: TextFormField(
+                  initialValue: bedroom,
+                  onChanged: (value) {
+                    bedroom = value;
+                  },
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'This field is required';
+                    }
+                    if (value.length > 11) {
+                      return 'Length must be less than 11 characters';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
-                      errorStyle: TextStyle(
-                        color: Colors.redAccent,
-                      ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0))),
-                  child: DropdownButtonHideUnderline(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: DropdownButton<String>(
-                        focusColor: HexColor("37659b"),
-                        hint: Text('Select the room'),
-                        value: _dropdownValue,
-                        isDense: true,
-                        onChanged: (value) {
-                          bedroom = value;
-                          setState(() {
-                            _dropdownValue = value;
-                            _inputController.value =
-                                new TextEditingController.fromValue(
-                                        new TextEditingValue(text: "My String"))
-                                    .value;
-                            print(_inputController.value);
-                          });
-                        },
-                        items: _room.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ),
+                    labelText: 'Room',
+                    contentPadding: EdgeInsets.only(left: 20),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)),
+                        borderSide: BorderSide(color: Colors.white)),
+                    fillColor: Colors.white38,
+                    hoverColor: Colors.white,
                   ),
                 ),
               ),
+              // Container(
+              //   height: 62,
+              //   padding: EdgeInsets.symmetric(horizontal: 12),
+              //   child: InputDecorator(
+              //     expands: false,
+              //     decoration: InputDecoration(
+              //         errorStyle: TextStyle(
+              //           color: Colors.redAccent,
+              //         ),
+              //         border: OutlineInputBorder(
+              //             borderRadius: BorderRadius.circular(30.0))),
+              //     child: DropdownButtonHideUnderline(
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //         child: DropdownButton<String>(
+              //           focusColor: HexColor("37659b"),
+              //           hint: Text('Select the room'),
+              //           value: _dropdownValue,
+              //           isDense: true,
+              //           onChanged: (value) {
+              //             bedroom = value;
+              //             setState(() {
+              //               _dropdownValue = value;
+              //               _inputController.value =
+              //                   new TextEditingController.fromValue(
+              //                           new TextEditingValue(text: "My String"))
+              //                       .value;
+              //               print(_inputController.value);
+              //             });
+              //           },
+              //           items: _room.map((String value) {
+              //             return DropdownMenuItem<String>(
+              //               value: value,
+              //               child: Text(value),
+              //             );
+              //           }).toList(),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 8.0,
               ),
@@ -173,14 +186,40 @@ class _AddDeviceState extends State<AddDevice> {
                       color: HexColor('4075b4'),
                       textColor: Colors.white,
                       onPressed: () {
-                        checkData(widget.user, deviceId, context, bedroom);
-
-                        //1
+                        checkData(
+                            widget.user, widget.scanDevice, context, bedroom);
+                        uploadImageToFirebase(_image, widget.scanDevice);
                       },
                     ),
                   ),
                 ),
-              )
+              ),
+              Row(
+                children: [
+                  Container(
+                    child: RaisedButton(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Text("image", style: TextStyle(fontSize: 20)),
+                      color: HexColor('4075b4'),
+                      textColor: Colors.white,
+                      onPressed: () {
+                        print('inside image fn');
+                        imageFromCamera();
+                      },
+                    ),
+                  ),
+                  Container(
+                    height: 110,
+                    width: 110,
+                    child: _image == null
+                        ? Text('No image selected.')
+                        : Image.file(
+                            _image,
+                          ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -188,9 +227,11 @@ class _AddDeviceState extends State<AddDevice> {
     );
   }
 
-  Future _scan() async {
-    deviceId = await scanner.scan();
-    print(deviceId + "  success");
-    this._inputController.text = deviceId;
+  Future uploadImageToFirebase(File _imageFile, String deviceId) async {
+    StorageReference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child(widget.user.uniqueId + '/' + widget.scanDevice + '.jpg');
+    firebaseStorageRef.putFile(_imageFile);
+    print('image uploaded');
   }
 }

@@ -7,6 +7,10 @@ import 'package:teco1/pages/Swtiches.dart';
 
 import '../Data.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
+
 class Cards extends StatelessWidget {
   final Data user;
   final List<String> device;
@@ -16,38 +20,37 @@ class Cards extends StatelessWidget {
   Cards({this.user, this.device, this.card, this.handler, this.switchNo});
   final databaseReference = FirebaseDatabase.instance.reference();
 
+  String url = '';
+
   @override
   Widget build(BuildContext context) {
     _title() {
       // deviceId
-      if(device[1]!=null) {
+      if (device[1] != null) {
         return Text(
           device[1],
-          style: Theme
-              .of(context)
-              .textTheme
-              .headline6
-              .copyWith(
-            fontWeight: FontWeight.w400,
-          ),
+          style: Theme.of(context).textTheme.headline6.copyWith(
+                fontWeight: FontWeight.w400,
+              ),
           maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          overflow: TextOverflow.clip,
+        softWrap: true,
         );
       }
     }
 
-
     _subtitle() {
-      // bedroom
       return Text(
         //TODO: switch number
         device[0] + " devices",
+
         style: Theme.of(context)
             .textTheme
             .subtitle1
             .copyWith(fontWeight: FontWeight.w300),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+        overflow: TextOverflow.clip,
+        softWrap: true,
       );
     }
 
@@ -103,33 +106,86 @@ class Cards extends StatelessWidget {
       );
     }
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(25),
-      ),
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: Icon(
-                Icons.home,
-                size: 38,
-                color: HexColor('9fbbdd'),
+    return InkWell(
+      onTap: _switchRoute,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.home,
+              //     size: 38,
+              //     color: HexColor('9fbbdd'),
+              //   ),
+              //   contentPadding:
+              //       EdgeInsets.only(top: 0, bottom: 0, right: 20, left: 20),
+              //   title: Center(child: _title()),
+              //   subtitle: Center(child: _subtitle()),
+              //   onTap: _switchRoute,
+              //   trailing: _delete(),
+              // )
+
+              FutureBuilder(
+                future: getImage(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done)
+                    return ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18),
+                        topRight: Radius.circular(18),
+                      ),
+                      child: Image.network(
+                        url,
+                        height: MediaQuery.of(context).size.height / 8,
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        fit: BoxFit.fill,
+                      ),
+                    );
+
+                  if (snapshot.connectionState == ConnectionState.none)
+                    return Text('no image');
+
+                  return CircularProgressIndicator();
+                },
               ),
-              contentPadding:
-                  EdgeInsets.only(top: 0, bottom: 0, right: 20, left: 20),
-              title: Center(child: _title()),
-              subtitle: Center(child: _subtitle()),
-              onTap: _switchRoute,
-              trailing: _delete(),
-            )
-          ],
+
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Center(child: _title()),
+                ],
+              ),
+              SizedBox(height: 2),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Center(child: _subtitle()),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future getImage() async {
+    StorageReference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child(user.uniqueId + '/' + device[0] + '.jpg');
+    url = await firebaseStorageRef.getDownloadURL();
+    print('image received');
+    url = await firebaseStorageRef.getDownloadURL();
   }
 }

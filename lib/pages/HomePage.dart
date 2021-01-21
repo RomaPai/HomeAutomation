@@ -7,6 +7,8 @@ import 'package:teco1/Data.dart';
 import 'package:teco1/Functions/signingFun.dart';
 import 'package:teco1/pages/Profile.dart';
 
+import 'package:qrscan/qrscan.dart' as scanner;
+
 import 'package:teco1/pages/addDevice.dart';
 import 'package:teco1/Functions/userData_fun.dart';
 import 'package:teco1/widgets/logInWidget.dart';
@@ -22,6 +24,8 @@ class ProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<ProfilePage> {
   GlobalKey _card = GlobalKey();
+
+  String deviceId;
 
   void _delete(List<String> device) {
     showDialog(
@@ -107,12 +111,10 @@ class _MyProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: HexColor("#1A1A1A"),
-
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Home",
+          "Dashboard",
           style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
         ),
         actions: <Widget>[
@@ -147,24 +149,20 @@ class _MyProfilePageState extends State<ProfilePage> {
         backgroundColor: HexColor('608fc7'),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          color: Colors.white
+       
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 20.0,
+            ),
+            GetListView(
+              devices: widget.personData.deviceList,
+              user: widget.personData,
+              card: _card,
+              handler: _delete,
+            ),
+          ],
         ),
-        child:
-          Column(
-            children:<Widget>[
-              SizedBox(
-                height: 20.0,
-              ),
-              GetListView(
-                devices: widget.personData.deviceList,
-                user: widget.personData,
-                card: _card,
-                handler: _delete,
-              ),
-            ],
-          ),
-
       ),
       floatingActionButton: RawMaterialButton(
           fillColor: HexColor("4075b4"),
@@ -191,15 +189,23 @@ class _MyProfilePageState extends State<ProfilePage> {
               ],
             ),
           ),
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            _scan();
+
+            await Navigator.push(
                 context,
                 CupertinoPageRoute(
                     builder: (context) => AddDevice(
                           user: widget.personData,
+                          scanDevice: deviceId,
                         )));
           }),
     );
+  }
+
+  Future _scan() async {
+    deviceId = await scanner.scan();
+    print(deviceId + "  success");
   }
 
   @override

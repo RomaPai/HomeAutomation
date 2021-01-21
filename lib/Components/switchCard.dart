@@ -22,6 +22,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:android_alarm_manager/android_alarm_manager.dart';
+import 'package:teco1/models/CustomList.dart';
 
 class SwitchCard extends StatefulWidget {
   final Data user;
@@ -165,8 +166,8 @@ class _MySwitchCardState extends State<SwitchCard> {
     if (Devices[2] != null) {
       await storage.write(key: "unique", value: user.uniqueId);
       await storage.write(key: "stat$seitchno $stat", value:formattedDate);
-      await storage.write(key: "SwitchNo $seitchno", value: formattedDate);
-      await storage.write(key: "deviceID$seitchno $dI", value: formattedDate);
+      //await storage.write(key: "SwitchNo $seitchno", value: formattedDate);
+      await storage.write(key: "deviceID$seitchno $dI $stat", value: formattedDate);
       print(storage);
       print("jassi");
     }
@@ -349,10 +350,11 @@ class _MySwitchCardState extends State<SwitchCard> {
      String id;
      String status;
     List<List> alarmThing = [];
+    
 
       await readData().then((value) async {
         allValues.forEach((k, v) {
-          List noAlarm = [];
+          // CustomAlarmList customAlarmList ;
           DateTime temp = DateTime.now();
           String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(temp);
 
@@ -360,34 +362,34 @@ class _MySwitchCardState extends State<SwitchCard> {
           if(formattedDate == v && k.startsWith("deviceID")){
            var arr =  k.split(" ");
            id = arr[1];
+           switchNo = arr[0].substring(8,10);
+           status = arr[2];
+
+
           }
-          if(formattedDate == v && k.startsWith("SwitchNo")){
-            var arr =  k.split(" ");
-            switchNo = arr[1];
-          }
+          
           if(formattedDate == v && k.startsWith("stat")){
             var arr =  k.split(" ");
             status = arr[1];
           }
+          
         });
         print("debug jassi");
-        for(int i =0;i <alarmThing.length;i++) {
           ref = databaseReference
               .child("users")
               .child(allValues['unique'])
               .child("devices")
-              .child(alarmThing[i][0])
+              .child(id)
               .child("Switch-list")
-              .child(alarmThing[i][1]);
-          if (alarmThing[i][2] == "false") {
+              .child(switchNo);
+          if (status == "false") {
             ref.update({"switch value": "1"}).then((value) =>
                 print("worked alarm finally "));
           }
-          if (alarmThing[i][2] == "true") {
+          if (status == "true") {
             ref.update({"switch value": "0"}).then((value) =>
                 print("worked alarm finally "));
           }
-        }
 
       });
 
