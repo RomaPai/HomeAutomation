@@ -11,6 +11,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+
 class Cards extends StatelessWidget {
   final Data user;
   final List<String> device;
@@ -34,7 +36,7 @@ class Cards extends StatelessWidget {
               ),
           maxLines: 1,
           overflow: TextOverflow.clip,
-        softWrap: true,
+          softWrap: true,
         );
       }
     }
@@ -133,30 +135,7 @@ class Cards extends StatelessWidget {
               //   trailing: _delete(),
               // )
 
-              FutureBuilder(
-                future: getImage(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done)
-                    return ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(18),
-                        topRight: Radius.circular(18),
-                      ),
-                      child: Image.network(
-                        url,
-                        height: MediaQuery.of(context).size.height / 8,
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        fit: BoxFit.fill,
-                      ),
-                    );
-
-                  if (snapshot.connectionState == ConnectionState.none)
-                    return Text('no image');
-
-                  return CircularProgressIndicator();
-                },
-              ),
+              showImage(),
 
               Spacer(),
               Row(
@@ -187,5 +166,49 @@ class Cards extends StatelessWidget {
     url = await firebaseStorageRef.getDownloadURL();
     print('image received');
     url = await firebaseStorageRef.getDownloadURL();
+  }
+
+  Widget showImage() {
+    return FutureBuilder(
+      future: getImage(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done && url != '')
+          return ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18),
+              topRight: Radius.circular(18),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: url,
+              useOldImageOnUrlChange: true,
+              // child: Image.network(
+              //   url,
+              height: MediaQuery.of(context).size.height / 8,
+              width: MediaQuery.of(context).size.width / 2.5,
+              fit: BoxFit.fill,
+              // ),
+            ),
+          );
+
+        if (snapshot.connectionState == ConnectionState.done && url == '')
+          return ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18),
+              topRight: Radius.circular(18),
+            ),
+            child: Image.asset(
+              'assets/room.jpg',
+              height: MediaQuery.of(context).size.height / 8,
+              width: MediaQuery.of(context).size.width / 2.5,
+              fit: BoxFit.fill,
+            ),
+          );
+
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return CircularProgressIndicator();
+
+        return Text('error');
+      },
+    );
   }
 }

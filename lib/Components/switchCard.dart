@@ -36,8 +36,6 @@ class SwitchCard extends StatefulWidget {
   SwitchCard(
       {this.user, this.seitchNo, this.Devices, this.s, this.notificationID});
 
-
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -46,17 +44,15 @@ class SwitchCard extends StatefulWidget {
 }
 
 class _MySwitchCardState extends State<SwitchCard> {
- static final storage = FlutterSecureStorage();
-   bool s;
+  static final storage = FlutterSecureStorage();
+  bool s;
   static Data user;
   String seitchno;
-   List<String> Devices;
-   String _switchNo;
-   String stat;
-   String dI;
+  List<String> Devices;
+  String _switchNo;
+  String stat;
+  String dI;
   int notificationID;
-
-
 
   var selectedDateTime;
   String _alarmTimeString = ' ';
@@ -66,10 +62,7 @@ class _MySwitchCardState extends State<SwitchCard> {
   String str = ' ';
   final timeController = TextEditingController();
   static Map<String, String> allValues;
- DateTime scheduleAlarmDateTime;
-
-
-
+  DateTime scheduleAlarmDateTime;
 
   _MySwitchCardState(userParam, seitChno, devices, s11, not) {
     user = userParam;
@@ -78,12 +71,11 @@ class _MySwitchCardState extends State<SwitchCard> {
     this.s = s11;
     this.notificationID = not;
 
-   // allValues = all;
+    // allValues = all;
   }
 
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
     AndroidAlarmManager.initialize();
     retrieveData();
@@ -91,11 +83,9 @@ class _MySwitchCardState extends State<SwitchCard> {
     WidgetsFlutterBinding.ensureInitialized();
   }
 
+  final databaseReference = FirebaseDatabase.instance.reference();
 
-   final databaseReference = FirebaseDatabase.instance.reference();
-
-
-   void uploadData(String index) {
+  void uploadData(String index) {
     DatabaseReference ref = databaseReference
         .child("users")
         .child(user.uniqueId)
@@ -117,7 +107,7 @@ class _MySwitchCardState extends State<SwitchCard> {
         .onValue
         .listen((event) {
       var snapshot = event.snapshot;
-      if (mounted){
+      if (mounted) {
         setState(() {
           data = snapshot.value['switch value'];
 
@@ -127,47 +117,46 @@ class _MySwitchCardState extends State<SwitchCard> {
             s = true;
           }
         });
-    }
+      }
     });
   }
 
- void retrieveTime() {
-   databaseReference
-       .child("users")
-       .child(user.uniqueId)
-       .child("devices")
-       .child(Devices[2])
-       .child("Switch-list")
-       .child(seitchno)
-       .onValue
-       .listen((event) {
-     var snapshot = event.snapshot;
-     if(mounted) {
-       setState(() {
-         data = snapshot.value['Alarm Time'];
-         if (data.length == 1) {
-           str = data;
-         } else {
-           str = data.substring(11, 16);
-         }
-       });
-     }
-   });
- }
-
-
+  void retrieveTime() {
+    databaseReference
+        .child("users")
+        .child(user.uniqueId)
+        .child("devices")
+        .child(Devices[2])
+        .child("Switch-list")
+        .child(seitchno)
+        .onValue
+        .listen((event) {
+      var snapshot = event.snapshot;
+      if (mounted) {
+        setState(() {
+          data = snapshot.value['Alarm Time'];
+          if (data.length == 1) {
+            str = data;
+          } else {
+            str = data.substring(11, 16);
+          }
+        });
+      }
+    });
+  }
 
   void addNew(String alarmKey, String alarmVal) async {
     await storage.write(key: alarmKey, value: alarmVal);
   }
 
-   void storeData(DateTime dateTime) async {
-     String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(dateTime);
+  void storeData(DateTime dateTime) async {
+    String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(dateTime);
     if (Devices[2] != null) {
       await storage.write(key: "unique", value: user.uniqueId);
-      await storage.write(key: "stat$seitchno $stat", value:formattedDate);
+      await storage.write(key: "stat$seitchno $stat", value: formattedDate);
       //await storage.write(key: "SwitchNo $seitchno", value: formattedDate);
-      await storage.write(key: "deviceID$seitchno $dI $stat", value: formattedDate);
+      await storage.write(
+          key: "deviceID$seitchno $dI $stat", value: formattedDate);
       print(storage);
       print("jassi");
     }
@@ -178,18 +167,18 @@ class _MySwitchCardState extends State<SwitchCard> {
     print(allValues);
     return allValues;
   }
- void _deleteAll() async {
-   await storage.deleteAll();
-   readData();
- }
 
- void delete(String switchNo){
-     allValues.removeWhere((key, value) => key.contains(switchNo));
- }
+  void _deleteAll() async {
+    await storage.deleteAll();
+    readData();
+  }
+
+  void delete(String switchNo) {
+    allValues.removeWhere((key, value) => key.contains(switchNo));
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Card(
       margin: EdgeInsets.only(bottom: 24, right: 20, left: 20),
       child: Column(
@@ -275,7 +264,7 @@ class _MySwitchCardState extends State<SwitchCard> {
                     exact: true,
                     wakeup: true,
                   );
-                   scheduleAlarm(_alarmTime);
+                  scheduleAlarm(_alarmTime);
                   print(_alarmTime);
                   // ignore: await_only_futures
                   await print('after alarmtime');
@@ -299,12 +288,11 @@ class _MySwitchCardState extends State<SwitchCard> {
                       alarmSelect = false;
                       sendTimeDb(_alarmTimeString, seitchno, user, Devices);
                     });
-                    if(scheduleAlarmDateTime.compareTo(DateTime.now())>0) {
+                    if (scheduleAlarmDateTime.compareTo(DateTime.now()) > 0) {
                       await AndroidAlarmManager.cancel(notificationID);
                       flutterLocalNotificationsPlugin.cancel(notificationID);
                     }
                     delete(seitchno);
-
                   }),
             ],
           ),
@@ -313,86 +301,78 @@ class _MySwitchCardState extends State<SwitchCard> {
     );
   }
 
- void scheduleAlarm(DateTime scheduledNotificationDateTime) async {
-   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-     'alarm_notif',
-     'alarm_notif',
-     'Channel for Alarm notification',
-     icon: 'logo',
-     priority: Priority.High,
-     importance: Importance.Max,
-     playSound: true,
-     // sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
-     largeIcon: DrawableResourceAndroidBitmap('logo'),
-   );
+  void scheduleAlarm(DateTime scheduledNotificationDateTime) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      'Channel for Alarm notification',
+      icon: 'logo',
+      priority: Priority.High,
+      importance: Importance.Max,
+      playSound: true,
+      // sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('logo'),
+    );
 
-   var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-     // sound: 'a_long_cold_sting.wav',
-       presentAlert: true,
-       presentBadge: true,
-       presentSound: true);
-   var platformChannelSpecifics = NotificationDetails(
-       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-   await flutterLocalNotificationsPlugin.schedule(
-       notificationID,
-       'Alarm Time',
-       'Please check you switch $seitchno.',
-       scheduledNotificationDateTime,
-       platformChannelSpecifics);
- }
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+        // sound: 'a_long_cold_sting.wav',
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true);
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        notificationID,
+        'Alarm Time',
+        'Please check you switch $seitchno.',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
 
-
- static Future<void> callback() async {
+  static Future<void> callback() async {
     print("alarm works");
     final databaseReference = FirebaseDatabase.instance.reference();
     DatabaseReference ref;
-     String switchNo;
-     String id;
-     String status;
+    String switchNo;
+    String id;
+    String status;
     List<List> alarmThing = [];
-    
 
-      await readData().then((value) async {
-        allValues.forEach((k, v) {
-          // CustomAlarmList customAlarmList ;
-          DateTime temp = DateTime.now();
-          String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(temp);
+    await readData().then((value) async {
+      allValues.forEach((k, v) {
+        // CustomAlarmList customAlarmList ;
+        DateTime temp = DateTime.now();
+        String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(temp);
 
+        if (formattedDate == v && k.startsWith("deviceID")) {
+          var arr = k.split(" ");
+          id = arr[1];
+          switchNo = arr[0].substring(8, 10);
+          status = arr[2];
+        }
 
-          if(formattedDate == v && k.startsWith("deviceID")){
-           var arr =  k.split(" ");
-           id = arr[1];
-           switchNo = arr[0].substring(8,10);
-           status = arr[2];
-
-
-          }
-          
-          if(formattedDate == v && k.startsWith("stat")){
-            var arr =  k.split(" ");
-            status = arr[1];
-          }
-          
-        });
-        print("debug jassi");
-          ref = databaseReference
-              .child("users")
-              .child(allValues['unique'])
-              .child("devices")
-              .child(id)
-              .child("Switch-list")
-              .child(switchNo);
-          if (status == "false") {
-            ref.update({"switch value": "1"}).then((value) =>
-                print("worked alarm finally "));
-          }
-          if (status == "true") {
-            ref.update({"switch value": "0"}).then((value) =>
-                print("worked alarm finally "));
-          }
-
+        if (formattedDate == v && k.startsWith("stat")) {
+          var arr = k.split(" ");
+          status = arr[1];
+        }
       });
-
+      print("debug jassi");
+      ref = databaseReference
+          .child("users")
+          .child(allValues['unique'])
+          .child("devices")
+          .child(id)
+          .child("Switch-list")
+          .child(switchNo);
+      if (status == "false") {
+        ref.update({"switch value": "1"}).then(
+            (value) => print("worked alarm finally "));
+      }
+      if (status == "true") {
+        ref.update({"switch value": "0"}).then(
+            (value) => print("worked alarm finally "));
+      }
+    });
   }
 
 // as() async {

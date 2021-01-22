@@ -42,7 +42,7 @@ dependencies:
   firebase_storage: ^4.0.1
   cloud_firestore: ^0.14.0+2
   firebase_core: ^0.5.0+1
-
+  cached_network_image: 2.3.3
 
 
 
@@ -81,6 +81,7 @@ flutter:
   assets:
     - google_logo.png
     - launcher.jpeg
+    - room.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

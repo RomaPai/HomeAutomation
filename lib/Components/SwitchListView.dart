@@ -49,7 +49,7 @@ class GetSwitchList extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: GridView.builder(
                 gridDelegate:
-                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
                 shrinkWrap: true,
                 itemCount: switchNumber4.length,
                 padding: EdgeInsets.symmetric(horizontal:16,vertical: 16),
@@ -87,7 +87,7 @@ class GetSwitchList extends StatelessWidget {
             child: GridView.builder(
 
                 gridDelegate:
-                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
                 // itemCount: lists.length,
                 shrinkWrap: true,
                 itemCount: switchNumber8.length,

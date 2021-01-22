@@ -83,9 +83,11 @@ class _AddDeviceState extends State<AddDevice> {
               ),
               ListTile(
                 title: TextField(
+                  enabled: false,
                   controller: this._inputController,
                   readOnly: true,
                   decoration: InputDecoration(
+                    labelText: 'Device ID',
                     hintText: widget.scanDevice,
                     contentPadding: EdgeInsets.only(left: 20),
                     border: OutlineInputBorder(
@@ -100,9 +102,6 @@ class _AddDeviceState extends State<AddDevice> {
                 height: 16.0,
               ),
 
-              const SizedBox(
-                height: 60.0,
-              ),
               ListTile(
                 title: TextFormField(
                   initialValue: bedroom,
@@ -171,8 +170,34 @@ class _AddDeviceState extends State<AddDevice> {
               //   ),
               // ),
               const SizedBox(
-                height: 8.0,
+                height: 24.0,
               ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    child: _image == null
+                        ? Text('Image not selected',style: TextStyle(color: Colors.black45),)
+                        : Image.file(
+                            _image,
+                          ),
+                  ),
+                
+                  IconButton(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      color: HexColor('4075b4'),
+                      onPressed: () {
+                        print('inside image fn');
+                        imageFromCamera();
+                      },
+                      icon: Icon(
+                        Icons.add_a_photo,
+                        size: 32,
+                      )),
+                ],
+              ),
+              SizedBox(height: 40,),
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Center(
@@ -193,32 +218,6 @@ class _AddDeviceState extends State<AddDevice> {
                     ),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    child: RaisedButton(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      child: Text("image", style: TextStyle(fontSize: 20)),
-                      color: HexColor('4075b4'),
-                      textColor: Colors.white,
-                      onPressed: () {
-                        print('inside image fn');
-                        imageFromCamera();
-                      },
-                    ),
-                  ),
-                  Container(
-                    height: 110,
-                    width: 110,
-                    child: _image == null
-                        ? Text('No image selected.')
-                        : Image.file(
-                            _image,
-                          ),
-                  ),
-                ],
               ),
             ],
           ),
