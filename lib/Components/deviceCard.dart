@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:teco1/pages/Swtiches.dart';
 
 import '../Data.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -135,7 +139,7 @@ class Cards extends StatelessWidget {
               //   trailing: _delete(),
               // )
 
-              showImage(),
+              showImage(context),
 
               Spacer(),
               Row(
@@ -159,56 +163,116 @@ class Cards extends StatelessWidget {
     );
   }
 
-  Future getImage() async {
-    StorageReference firebaseStorageRef = FirebaseStorage.instance
-        .ref()
-        .child(user.uniqueId + '/' + device[0] + '.jpg');
-    url = await firebaseStorageRef.getDownloadURL();
-    print('image received');
-    url = await firebaseStorageRef.getDownloadURL();
-  }
+  // Future getImage() async {
+  //   StorageReference firebaseStorageRef = FirebaseStorage.instance
+  //       .ref()
+  //       .child(user.uniqueId + '/' + device[0] + '.jpg');
+  //   url = await firebaseStorageRef.getDownloadURL();
+  //   print('image received');
+  //   url = await firebaseStorageRef.getDownloadURL();
+  // }
 
-  Widget showImage() {
+  // Widget showImage() {
+  //   return FutureBuilder(
+  //     future: getImage(),
+  //     builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.done && url != '')
+  //         return ClipRRect(
+  //           borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(18),
+  //             topRight: Radius.circular(18),
+  //           ),
+  //           child: CachedNetworkImage(
+  //             imageUrl: url,
+  //             useOldImageOnUrlChange: true,
+  //             // child: Image.network(
+  //             //   url,
+  //             height: MediaQuery.of(context).size.height / 8,
+  //             width: MediaQuery.of(context).size.width / 2.5,
+  //             fit: BoxFit.fill,
+  //             // ),
+  //           ),
+  //         );
+
+  //       if (snapshot.connectionState == ConnectionState.done && url == '')
+  //         return ClipRRect(
+  //           borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(18),
+  //             topRight: Radius.circular(18),
+  //           ),
+  //           child: Image.asset(
+  //             'assets/room.jpg',
+  //             height: MediaQuery.of(context).size.height / 8,
+  //             width: MediaQuery.of(context).size.width / 2.5,
+  //             fit: BoxFit.fill,
+  //           ),
+  //         );
+
+  //       if (snapshot.connectionState == ConnectionState.waiting)
+  //         return CircularProgressIndicator();
+
+  //       return Text('error');
+  //     },
+  //   );
+  // }
+
+
+
+// scaled_3a327919-5bb0-40dc-954a-2c112cce5e989099620409757373831.jpg
+
+ String imagePath;
+
+  Widget showImage(BuildContext context) {
+
+    if(imagePath==''){
+        return ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(18),
+          topRight: Radius.circular(18),
+        ),
+        child: Image.asset(
+          'assets/room.jpg',
+          height: MediaQuery.of(context).size.height / 8,
+          width: MediaQuery.of(context).size.width / 2.5,
+          fit: BoxFit.fill,
+        ),
+      );
+    }
     return FutureBuilder(
       future: getImage(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && url != '')
+        // if(imagePath!=''){
+          print(imagePath);
           return ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18),
-              topRight: Radius.circular(18),
-            ),
-            child: CachedNetworkImage(
-              imageUrl: url,
-              useOldImageOnUrlChange: true,
-              // child: Image.network(
-              //   url,
-              height: MediaQuery.of(context).size.height / 8,
-              width: MediaQuery.of(context).size.width / 2.5,
-              fit: BoxFit.fill,
-              // ),
-            ),
-          );
-
-        if (snapshot.connectionState == ConnectionState.done && url == '')
-          return ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18),
-              topRight: Radius.circular(18),
-            ),
-            child: Image.asset(
-              'assets/room.jpg',
-              height: MediaQuery.of(context).size.height / 8,
-              width: MediaQuery.of(context).size.width / 2.5,
-              fit: BoxFit.fill,
-            ),
-          );
-
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return CircularProgressIndicator();
-
-        return Text('error');
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(18),
+          topRight: Radius.circular(18),
+        ),
+        child: Image.file(
+          File(imagePath+'/scaled_662ecca1-ca5d-491a-8fb3-3be022d25b743497017298780037207.jpg'),
+          height: MediaQuery.of(context).size.height / 8,
+          width: MediaQuery.of(context).size.width / 2.5,
+          fit: BoxFit.fill,
+        ),
+      );
+        // }
+      
       },
     );
+  }
+
+  Future getImage() async {
+    String folderName = device[0];
+   
+    Directory _appDocDir = await getApplicationDocumentsDirectory();
+    print(_appDocDir.path);
+    Directory _appDocDirFolder = Directory('${_appDocDir.path}/$folderName');
+    // Directory _appDocDirNewFolder;
+    if (await _appDocDirFolder.exists()) {
+      imagePath=_appDocDirFolder.path;
+    }
+    else{
+      imagePath='';
+    }
   }
 }

@@ -43,7 +43,8 @@ dependencies:
   cloud_firestore: ^0.14.0+2
   firebase_core: ^0.5.0+1
   cached_network_image: 2.3.3
-
+  path_provider: ^1.6.27
+  path: ^1.7.0
 
 
 

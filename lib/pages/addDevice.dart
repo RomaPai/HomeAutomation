@@ -11,9 +11,9 @@ import '../Data.dart';
 
 import 'package:image_picker/image_picker.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AddDevice extends StatefulWidget {
   final Data user;
@@ -28,8 +28,11 @@ class _AddDeviceState extends State<AddDevice> {
   TextEditingController _inputController;
 
   String bedroom = "";
-
+  String path;
+  var fileName;
   File _image;
+  File localImage;
+
   final picker = ImagePicker();
 
   Future imageFromCamera() async {
@@ -42,10 +45,36 @@ class _AddDeviceState extends State<AddDevice> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        print('before directory');
+        print(pickedFile.path);
+        //  path= getApplicationDocumentsDirectory().toString();
+        path = pickedFile.path;
       } else {
         print('No image selected.');
       }
     });
+
+    //  print(path);
+    fileName = basename(_image.path);
+    // fileName=widget.scanDevice +'.jpg';
+
+    print('filename' + fileName);
+    print('image path' + _image.path);
+    String folderName = widget.scanDevice;
+    Directory _appDocDir = await getApplicationDocumentsDirectory();
+    print(_appDocDir.path);
+    Directory _appDocDirFolder = Directory('${_appDocDir.path}/$folderName');
+    Directory _appDocDirNewFolder;
+    if (!await _appDocDirFolder.exists()) {
+      _appDocDirNewFolder = await _appDocDirFolder.create(recursive: true);
+    } else {
+      _appDocDirNewFolder = _appDocDirFolder;
+    }
+
+    String dir = _appDocDirNewFolder.path;
+    print('dir' + dir);
+    localImage = await File(_image.path).copy('$dir/$fileName');
+    print('local image' + localImage.path);
   }
 
   Future imageFromGallery() async {
@@ -63,6 +92,10 @@ class _AddDeviceState extends State<AddDevice> {
       }
     });
   }
+
+  // final appDir = await syspaths.getApplicationDocumentsDirectory();
+  // final fileName = path.basename(pickedFile.path);
+  // final savedImage = await imageFile.copy('${appDir.path}/$fileName');
 
   @override
   Widget build(BuildContext context) {
@@ -178,12 +211,14 @@ class _AddDeviceState extends State<AddDevice> {
                 children: [
                   Container(
                     child: _image == null
-                        ? Text('Image not selected',style: TextStyle(color: Colors.black45),)
+                        ? Text(
+                            'Image not selected',
+                            style: TextStyle(color: Colors.black45),
+                          )
                         : Image.file(
                             _image,
                           ),
                   ),
-                
                   IconButton(
                       padding: EdgeInsets.symmetric(vertical: 4),
                       color: HexColor('4075b4'),
@@ -197,7 +232,9 @@ class _AddDeviceState extends State<AddDevice> {
                       )),
                 ],
               ),
-              SizedBox(height: 40,),
+              SizedBox(
+                height: 40,
+              ),
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Center(
@@ -213,7 +250,7 @@ class _AddDeviceState extends State<AddDevice> {
                       onPressed: () {
                         checkData(
                             widget.user, widget.scanDevice, context, bedroom);
-                        uploadImageToFirebase(_image, widget.scanDevice);
+                        // uploadImageToFirebase(_image, widget.scanDevice);
                       },
                     ),
                   ),
@@ -226,11 +263,11 @@ class _AddDeviceState extends State<AddDevice> {
     );
   }
 
-  Future uploadImageToFirebase(File _imageFile, String deviceId) async {
-    StorageReference firebaseStorageRef = FirebaseStorage.instance
-        .ref()
-        .child(widget.user.uniqueId + '/' + widget.scanDevice + '.jpg');
-    firebaseStorageRef.putFile(_imageFile);
-    print('image uploaded');
-  }
+  // Future uploadImageToFirebase(File _imageFile, String deviceId) async {
+  //   StorageReference firebaseStorageRef = FirebaseStorage.instance
+  //       .ref()
+  //       .child(widget.user.uniqueId + '/' + widget.scanDevice + '.jpg');
+  //   firebaseStorageRef.putFile(_imageFile);
+  //   print('image uploaded');
+  // }
 }
