@@ -12,7 +12,7 @@ import '../Data.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class AddDevice extends StatefulWidget {
@@ -54,9 +54,7 @@ class _AddDeviceState extends State<AddDevice> {
       }
     });
 
-    //  print(path);
-    fileName = basename(_image.path);
-    // fileName=widget.scanDevice +'.jpg';
+    fileName = p.basename(_image.path);
 
     print('filename' + fileName);
     print('image path' + _image.path);
@@ -71,26 +69,29 @@ class _AddDeviceState extends State<AddDevice> {
       _appDocDirNewFolder = _appDocDirFolder;
     }
 
-    String dir = _appDocDirNewFolder.path;
-    print('dir' + dir);
-    localImage = await File(_image.path).copy('$dir/$fileName');
+    // String dir = _appDocDirNewFolder.path;
+    // print('dir' + dir);
+    // String newPath = p.join(_appDocDir.path,'Pictures');
+    // print('newpath'+newPath);
+    // String str='Pictures';
+    // Directory newPath=Directory('${_appDocDir.path}/$str');
+    // Directory newtemp;
+    // if (!await newPath.exists()) {
+    //  newtemp = await newPath.create(recursive: true);
+    // } else {
+    //   newtemp = newPath;
+    // }
+    // // newPath = path.join(newPath, folderName );
+    // localImage = await File(_image.path).copy(newtemp.path);
+    String dev = widget.scanDevice + '.jpg';
+    String temp = p.join(_appDocDirNewFolder.path, dev);
+
+    // localImage.renameSync(temp);
+    // print('after local image'+_image.path);
+
+    // localImage = await File(_image.path).copy('$_appDocDirNewFolder/$fileName');
+    localImage = await File(_image.path).copy(temp);
     print('local image' + localImage.path);
-  }
-
-  Future imageFromGallery() async {
-    final pickedFile = await picker.getImage(
-        source: ImageSource.gallery,
-        imageQuality: 50,
-        maxHeight: 120,
-        maxWidth: 100);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
   }
 
   // final appDir = await syspaths.getApplicationDocumentsDirectory();

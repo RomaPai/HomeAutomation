@@ -46,10 +46,13 @@ class Cards extends StatelessWidget {
     }
 
     _subtitle() {
+      String number;
+      if (device[0].contains('4s')) {
+        number = "4";
+      } else
+        number = "8";
       return Text(
-        //TODO: switch number
-        device[0] + " devices",
-
+        number + " devices",
         style: Theme.of(context)
             .textTheme
             .subtitle1
@@ -108,7 +111,11 @@ class Cards extends StatelessWidget {
           size: 30,
           color: HexColor('#ff8080'),
         ),
-        onPressed: () => handler(device),
+        onPressed: (){
+          handler(device);
+          getImage();
+          Directory(imagePath).deleteSync(recursive: true);
+        } ,
       );
     }
 
@@ -216,16 +223,13 @@ class Cards extends StatelessWidget {
   //   );
   // }
 
-
-
 // scaled_3a327919-5bb0-40dc-954a-2c112cce5e989099620409757373831.jpg
 
- String imagePath;
+  String imagePath;
 
   Widget showImage(BuildContext context) {
-
-    if(imagePath==''){
-        return ClipRRect(
+    if (imagePath == '') {
+      return ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(18),
           topRight: Radius.circular(18),
@@ -242,37 +246,34 @@ class Cards extends StatelessWidget {
       future: getImage(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         // if(imagePath!=''){
-          print(imagePath);
-          return ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-        ),
-        child: Image.file(
-          File(imagePath+'/scaled_662ecca1-ca5d-491a-8fb3-3be022d25b743497017298780037207.jpg'),
-          height: MediaQuery.of(context).size.height / 8,
-          width: MediaQuery.of(context).size.width / 2.5,
-          fit: BoxFit.fill,
-        ),
-      );
+        print(imagePath);
+        return ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
+          ),
+          child: Image.file(
+            File(imagePath + device[0] + '.jpg'),
+            height: MediaQuery.of(context).size.height / 8,
+            width: MediaQuery.of(context).size.width / 2.5,
+            fit: BoxFit.fill,
+          ),
+        );
         // }
-      
       },
     );
   }
 
   Future getImage() async {
     String folderName = device[0];
-   
     Directory _appDocDir = await getApplicationDocumentsDirectory();
     print(_appDocDir.path);
-    Directory _appDocDirFolder = Directory('${_appDocDir.path}/$folderName');
+    Directory _appDocDirFolder = Directory('${_appDocDir.path}/$folderName/');
     // Directory _appDocDirNewFolder;
     if (await _appDocDirFolder.exists()) {
-      imagePath=_appDocDirFolder.path;
-    }
-    else{
-      imagePath='';
+      imagePath = _appDocDirFolder.path;
+    } else {
+      imagePath = '';
     }
   }
 }
